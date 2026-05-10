@@ -29,9 +29,9 @@ export async function renderShell(activePage) {
   const isAdmin = profile.role === 'admin';
 
   const navItems = [
-    { id: 'cases', label: 'Журнал заключень', href: '/pages/cases.html', icon: 'cases', roles: ['admin','pathologist','laborant','registrar'] },
-    { id: 'cap',   label: 'CAP Шаблони',      href: '/pages/cap.html',   icon: 'cap',   roles: ['admin','pathologist','laborant'] },
-    { id: 'admin', label: 'Адмін панель',      href: '/pages/admin.html', icon: 'admin', roles: ['admin'] },
+    { id: 'cases', label: 'Журнал заключень', href: '/MORPHEUS-PATH/pages/cases.html', icon: 'cases', roles: ['admin','pathologist','laborant','registrar'] },
+    { id: 'cap',   label: 'CAP Шаблони',      href: '/MORPHEUS-PATH/pages/cap.html',   icon: 'cap',   roles: ['admin','pathologist','laborant'] },
+    { id: 'admin', label: 'Адмін панель',      href: '/MORPHEUS-PATH/pages/admin.html', icon: 'admin', roles: ['admin'] },
   ].filter(item => item.roles.includes(profile.role));
 
   const navHtml = navItems.map(item => `
