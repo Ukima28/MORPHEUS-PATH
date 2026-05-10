@@ -6,7 +6,7 @@
   <title>Morpheus Path — Журнал</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="/MORPHEUS-PATH/css/main.css">
 </head>
 <body>
   <div class="app-shell">
@@ -179,9 +179,9 @@
   </style>
 
   <script type="module">
-    import { requireAuth, getProfile } from '../js/auth.js';
-    import { renderShell, toast } from '../js/shell.js';
-    import { supabase } from '../js/supabase.js';
+    import { requireAuth, getProfile } from '/MORPHEUS-PATH/js/auth.js';
+    import { renderShell, toast } from '/MORPHEUS-PATH/js/shell.js';
+    import { supabase } from '/MORPHEUS-PATH/js/supabase.js';
 
     const MATERIAL_LABELS = { biopsy: 'Біопсія', surgical: 'Операційний', cytology: 'Цитологія', other: 'Інше' };
     const STATUS_LABELS   = { draft: 'Чернетка', in_progress: 'В роботі', signed: 'Підписано', archived: 'Архів' };
@@ -338,7 +338,7 @@
       document.querySelectorAll('#cases-tbody tr').forEach(tr => {
         tr.addEventListener('click', e => {
           if (e.target.type === 'checkbox') return;
-          window.location.href = `/pages/report.html?id=${tr.dataset.id}`;
+          window.location.href = `/MORPHEUS-PATH/pages/report.html?id=${tr.dataset.id}`;
         });
       });
 
@@ -419,7 +419,7 @@
 
       closeModal();
       toast('Заключення створено');
-      window.location.href = `/pages/report.html?id=${data.id}`;
+      window.location.href = `/MORPHEUS-PATH/pages/report.html?id=${data.id}`;
     }
 
     // Модальне вікно
