@@ -6,7 +6,7 @@
   <title>Morpheus Path — Адмін</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="/MORPHEUS-PATH/css/main.css">
 </head>
 <body>
   <div class="app-shell">
@@ -24,8 +24,8 @@
     </div>
   </div>
   <script type="module">
-    import { requireRole } from '../js/auth.js';
-    import { renderShell } from '../js/shell.js';
+    import { requireRole } from '/MORPHEUS-PATH/js/auth.js';
+    import { renderShell } from '/MORPHEUS-PATH/js/shell.js';
     async function init() {
       await requireRole('admin');
       await renderShell('admin');
