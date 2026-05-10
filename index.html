@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Morpheus Path — Вхід</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --c-accent:  #2563EB;
+      --c-accent-hover: #1D4ED8;
+      --c-bg:      #F4F5F7;
+      --c-surface: #FFFFFF;
+      --c-border:  #E5E7EB;
+      --c-text:    #111827;
+      --c-text-2:  #6B7280;
+      --c-red:     #EF4444;
+      --font:      'DM Sans', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: var(--font);
+      background: var(--c-bg);
+      color: var(--c-text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 100vh;
+    }
+
+    /* ліва панель */
+    .left-panel {
+      background: #111827;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .left-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 30% 50%, rgba(37,99,235,0.15) 0%, transparent 70%);
+    }
+
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--c-accent);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
+    }
+
+    .logo-text-wrap {}
+
+    .logo-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: white;
+      letter-spacing: 0.01em;
+    }
+
+    .logo-tagline {
+      font-size: 10px;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .hero-text {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-title {
+      font-size: 32px;
+      font-weight: 300;
+      color: white;
+      line-height: 1.3;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-title strong {
+      font-weight: 600;
+      color: #60A5FA;
+    }
+
+    .hero-desc {
+      font-size: 14px;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.7;
+      max-width: 340px;
+    }
+
+    .left-footer {
+      font-size: 11px;
+      color: rgba(255,255,255,0.2);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* права панель — форма */
+    .right-panel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 380px;
+    }
+
+    .login-heading {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--c-text);
+      margin-bottom: 6px;
+    }
+
+    .login-sub {
+      font-size: 13px;
+      color: var(--c-text-2);
+      margin-bottom: 32px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--c-text-2);
+      margin-bottom: 6px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--c-border);
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: var(--font);
+      color: var(--c-text);
+      background: var(--c-surface);
+      transition: border-color 0.15s, box-shadow 0.15s;
+      outline: none;
+    }
+
+    .form-input:focus {
+      border-color: var(--c-accent);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 11px;
+      background: var(--c-accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: var(--font);
+      cursor: pointer;
+      transition: background 0.15s;
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-login:hover:not(:disabled) { background: var(--c-accent-hover); }
+    .btn-login:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .error-msg {
+      background: #FEF2F2;
+      border: 1px solid #FECACA;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--c-red);
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .error-msg.show { display: block; }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      display: none;
+    }
+
+    .btn-login.loading .spinner { display: block; }
+    .btn-login.loading .btn-text { display: none; }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 768px) {
+      body { grid-template-columns: 1fr; }
+      .left-panel { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ліва панель -->
+  <div class="left-panel">
+    <div class="logo-wrap">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4" y="2" width="16" height="20" rx="2"/>
+          <circle cx="12" cy="13" r="3" fill="#111827"/>
+          <rect x="8" y="5" width="8" height="1.5" rx="0.75" fill="#111827"/>
+        </svg>
+      </div>
+      <div class="logo-text-wrap">
+        <div class="logo-name">Morpheus Path</div>
+        <div class="logo-tagline">Transforming Tissue into Truth</div>
+      </div>
+    </div>
+
+    <div class="hero-text">
+      <h1 class="hero-title">
+        Лабораторна<br>
+        інформаційна<br>
+        <strong>система</strong>
+      </h1>
+      <p class="hero-desc">
+        Цифрова платформа для патоморфологічних лабораторій. CAP протоколи, ICD-O-4 кодування, повний аудит.
+      </p>
+    </div>
+
+    <div class="left-footer">
+      © 2025 Morpheus Path. Всі права захищені.
+    </div>
+  </div>
+
+  <!-- Права панель — форма -->
+  <div class="right-panel">
+    <div class="login-card">
+      <h2 class="login-heading">Вхід в систему</h2>
+      <p class="login-sub">Введіть ваші облікові дані</p>
+
+      <div id="error-msg" class="error-msg"></div>
+
+      <div class="form-group">
+        <label class="form-label" for="email">Email</label>
+        <input
+          class="form-input"
+          type="email"
+          id="email"
+          placeholder="your@email.com"
+          autocomplete="email"
+        >
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Пароль</label>
+        <input
+          class="form-input"
+          type="password"
+          id="password"
+          placeholder="••••••••"
+          autocomplete="current-password"
+        >
+      </div>
+
+      <button class="btn-login" id="btn-login">
+        <span class="btn-text">Увійти</span>
+        <div class="spinner"></div>
+      </button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { login, getSession, redirectByRole, getProfile } from './js/auth.js';
+
+    // Якщо вже авторизований — редірект
+    (async () => {
+      const session = await getSession();
+      if (session) {
+        const profile = await getProfile();
+        if (profile) redirectByRole(profile.role);
+      }
+    })();
+
+    const emailEl    = document.getElementById('email');
+    const passwordEl = document.getElementById('password');
+    const btnLogin   = document.getElementById('btn-login');
+    const errorMsg   = document.getElementById('error-msg');
+
+    function showError(msg) {
+      errorMsg.textContent = msg;
+      errorMsg.classList.add('show');
+    }
+
+    function hideError() {
+      errorMsg.classList.remove('show');
+    }
+
+    function setLoading(v) {
+      btnLogin.disabled = v;
+      btnLogin.classList.toggle('loading', v);
+    }
+
+    async function handleLogin() {
+      hideError();
+      const email    = emailEl.value.trim();
+      const password = passwordEl.value;
+
+      if (!email || !password) {
+        showError('Введіть email та пароль');
+        return;
+      }
+
+      setLoading(true);
+      try {
+        await login(email, password);
+        const profile = await getProfile();
+        redirectByRole(profile.role);
+      } catch (err) {
+        showError('Невірний email або пароль');
+        setLoading(false);
+      }
+    }
+
+    btnLogin.addEventListener('click', handleLogin);
+
+    passwordEl.addEventListener('keydown', e => {
+      if (e.key === 'Enter') handleLogin();
+    });
+  </script>
+</body>
+</html>
