@@ -58,7 +58,7 @@ export async function renderShell(activePage) {
     <aside class="sidebar">
       <div class="sb-head">
         <div class="sb-sys">MORPHEUS PATHOLOGY</div>
-        <div class="sb-user">${profile.full_name}</div>
+        <div class="sb-user">${ROLE_LABELS[profile.role] || profile.role} · ${profile.full_name}</div>
       </div>
       <nav class="sb-nav">${navHtml}</nav>
       <div class="sb-footer">
