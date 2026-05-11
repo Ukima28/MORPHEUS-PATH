@@ -41,10 +41,10 @@ export async function renderShell(activePage) {
   if (!profile) return null;
 
   const nav = [
-    { id: 'cases',     label: 'Журнал заключень', href: `${BASE}/pages/cases.html`,     icon: 'fa-solid fa-table-list',            roles: ['admin','pathologist','laborant','registrar'] },
-    { id: 'cap',       label: 'Протоколи CAP',     href: `${BASE}/pages/cap.html`,       icon: 'fa-solid fa-file-medical',          roles: ['admin','pathologist','laborant'] },
-    { id: 'knowledge', label: 'База знань',         href: `${BASE}/pages/knowledge.html`, icon: 'fa-solid fa-book-open',             roles: ['admin','pathologist','laborant','registrar'] },
-    { id: 'admin',     label: 'Адмін панель',       href: `${BASE}/pages/admin.html`,     icon: 'fa-solid fa-shield-halved',         roles: ['admin'] },
+    { id: 'cases',     label: 'Журнал заключень', href: `${BASE}/pages/cases.html`,     icon: 'fa-solid fa-table-list',    roles: ['admin','pathologist','laborant','registrar'] },
+    { id: 'cap',       label: 'Протоколи CAP',     href: `${BASE}/pages/cap.html`,       icon: 'fa-solid fa-file-medical',  roles: ['admin','pathologist','laborant'] },
+    { id: 'knowledge', label: 'База знань',         href: `${BASE}/pages/knowledge.html`, icon: 'fa-solid fa-book-open',     roles: ['admin','pathologist','laborant','registrar'] },
+    { id: 'admin',     label: 'Адмін панель',       href: `${BASE}/pages/admin.html`,     icon: 'fa-solid fa-shield-halved', roles: ['admin'] },
   ].filter(item => item.roles.includes(profile.role));
 
   const navHtml = nav.map(item => `
@@ -56,21 +56,11 @@ export async function renderShell(activePage) {
 
   const html = `
     <aside class="sidebar">
-      <div class="sb-logo">
-        <div class="sb-logo-box">M</div>
-        <div class="sb-logo-name">MORPHEUS<br>PATHOLOGY</div>
+      <div class="sb-head">
+        <div class="sb-sys">MORPHEUS PATHOLOGY</div>
+        <div class="sb-user">${profile.full_name}</div>
       </div>
-
-      <div class="sb-profile">
-        <div class="sb-avatar">${initials(profile.full_name)}</div>
-        <div class="sb-user-info">
-          <div class="sb-user-name">${profile.full_name}</div>
-          <div class="sb-user-role">${ROLE_LABELS[profile.role] || profile.role}</div>
-        </div>
-      </div>
-
       <nav class="sb-nav">${navHtml}</nav>
-
       <div class="sb-footer">
         <button class="sb-logout" id="btn-logout">
           <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>
