@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>MORPHEUS PATH — Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="/MORPHEUS-PATH/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+  <link href="/MORPHEUS-PATH/css/sb-admin-2.min.css" rel="stylesheet">
+  <link href="/MORPHEUS-PATH/css/morpheus.css" rel="stylesheet">
+</head>
+<body id="page-top">
+
+<div id="wrapper">
+
+  <!-- Sidebar -->
+  <ul class="navbar-nav bg-white sidebar sidebar-dark accordion border-right" id="accordionSidebar"></ul>
+
+  <!-- Content Wrapper -->
+  <div id="content-wrapper" class="d-flex flex-column">
+    <div id="content">
+
+      <!-- Topbar -->
+      <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top">
+        <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+          <i class="fa fa-bars"></i>
+        </button>
+        <span class="navbar-brand font-weight-bold text-dark mb-0 h5 ml-2">Dashboard</span>
+        <ul class="navbar-nav ml-auto align-items-center">
+          <div class="topbar-divider"></div>
+          <li class="nav-item">
+            <span class="nav-link text-gray-600 small" id="topbar-username"></span>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Page Content -->
+      <div class="container-fluid">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h1 class="page-heading">Dashboard</h1>
+            <p class="page-subheading mb-0">Статистика патологоанатомічної служби</p>
+          </div>
+          <!-- Перемикач місяців -->
+          <div class="d-flex align-items-center" style="gap:8px">
+            <button class="btn btn-sm btn-outline-secondary" id="btn-prev-month">
+              <i class="fas fa-chevron-left fa-xs"></i>
+            </button>
+            <span class="font-weight-600 text-dark" id="current-month" style="min-width:140px;text-align:center;font-size:14px"></span>
+            <button class="btn btn-sm btn-outline-secondary" id="btn-next-month">
+              <i class="fas fa-chevron-right fa-xs"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="row mb-4">
+          <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary h-100 py-2">
+              <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Заключень підписано</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="stat-signed">—</div>
+                    <div class="text-xs text-muted mt-1" id="stat-signed-total"></div>
+                  </div>
+                  <div class="col-auto">
+                    <i class="fas fa-file-signature fa-2x text-gray-300"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success h-100 py-2">
+              <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Розтини дорослі</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="stat-adult">—</div>
+                    <div class="text-xs text-muted mt-1" id="stat-adult-total"></div>
+                  </div>
+                  <div class="col-auto">
+                    <i class="fas fa-book-medical fa-2x text-gray-300"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning h-100 py-2">
+              <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Розтини дитячі</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="stat-child">—</div>
+                    <div class="text-xs text-muted mt-1" id="stat-child-total"></div>
+                  </div>
+                  <div class="col-auto">
+                    <i class="fas fa-baby fa-2x text-gray-300"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info h-100 py-2">
+              <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Всього документів</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="stat-total">—</div>
+                    <div class="text-xs text-muted mt-1" id="stat-total-all"></div>
+                  </div>
+                  <div class="col-auto">
+                    <i class="fas fa-folder-open fa-2x text-gray-300"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Розподіл по лікарях -->
+        <div class="card mb-4">
+          <div class="card-header d-flex align-items-center justify-content-between py-3">
+            <span>Розподіл по лікарях</span>
+            <small class="text-muted" id="table-period"></small>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover mb-0">
+                <thead>
+                  <tr>
+                    <th>Патолог</th>
+                    <th class="text-center">Заключень</th>
+                    <th class="text-center">Розтини (дор.)</th>
+                    <th class="text-center">Розтини (діт.)</th>
+                    <th class="text-center">Всього</th>
+                  </tr>
+                </thead>
+                <tbody id="doctors-tbody">
+                  <tr>
+                    <td colspan="5" class="text-center py-4 text-muted">
+                      <i class="fas fa-circle-notch fa-spin mr-2"></i> Завантаження...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <footer class="sticky-footer bg-white">
+      <div class="container my-auto">
+        <div class="copyright text-center my-auto">
+          <span>© 2025 Morpheus Path</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script src="/MORPHEUS-PATH/vendor/jquery/jquery.min.js"></script>
+<script src="/MORPHEUS-PATH/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/MORPHEUS-PATH/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/MORPHEUS-PATH/js/sb-admin-2.min.js"></script>
+
+<script type="module">
+  import { requireAuth, getProfile } from '/MORPHEUS-PATH/js/auth.js';
+  import { renderShell, toast } from '/MORPHEUS-PATH/js/shell.js';
+  import { supabase } from '/MORPHEUS-PATH/js/supabase.js';
+
+  const MONTHS_UK = ['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
+
+  let profile = null;
+  let currentDate = new Date();
+
+  async function init() {
+    await requireAuth();
+    profile = await renderShell('dashboard');
+    if (!profile) return;
+
+    updateMonthLabel();
+    await loadStats();
+    bindEvents();
+  }
+
+  function updateMonthLabel() {
+    const m = currentDate.getMonth();
+    const y = currentDate.getFullYear();
+    document.getElementById('current-month').textContent = `${MONTHS_UK[m]} ${y}`;
+    document.getElementById('table-period').textContent = `${MONTHS_UK[m]} ${y}`;
+  }
+
+  async function loadStats() {
+    const y = currentDate.getFullYear();
+    const m = currentDate.getMonth();
+    const from = `${y}-${String(m+1).padStart(2,'0')}-01`;
+    const to   = new Date(y, m+1, 0).toISOString().split('T')[0];
+
+    // Фільтр по організації для не-адмінів
+    const orgFilter = profile.role !== 'admin' && profile.organization_id
+      ? profile.organization_id : null;
+
+    // Заключення підписані за місяць
+    let casesQuery = supabase.from('cases').select('id, status, case_date, created_by, organization_id, profiles!cases_assigned_pathologist_fkey(full_name)');
+    if (orgFilter) casesQuery = casesQuery.eq('organization_id', orgFilter);
+    const { data: cases } = await casesQuery;
+
+    // Розтини за місяць
+    let autopsyQuery = supabase.from('autopsy_reports').select('id, autopsy_type, report_date, created_by, organization_id, profiles!autopsy_reports_assigned_pathologist_fkey(full_name)');
+    if (orgFilter) autopsyQuery = autopsyQuery.eq('organization_id', orgFilter);
+    const { data: autopsies } = await autopsyQuery;
+
+    const allCases     = cases     || [];
+    const allAutopsies = autopsies || [];
+
+    // Фільтр по місяцю
+    const monthCases     = allCases.filter(c => c.case_date >= from && c.case_date <= to);
+    const monthAutopsies = allAutopsies.filter(a => a.report_date >= from && a.report_date <= to);
+
+    const signedMonth = monthCases.filter(c => c.status === 'signed').length;
+    const adultMonth  = monthAutopsies.filter(a => a.autopsy_type === 'adult').length;
+    const childMonth  = monthAutopsies.filter(a => a.autopsy_type === 'child').length;
+
+    const signedAll = allCases.filter(c => c.status === 'signed').length;
+    const adultAll  = allAutopsies.filter(a => a.autopsy_type === 'adult').length;
+    const childAll  = allAutopsies.filter(a => a.autopsy_type === 'child').length;
+
+    document.getElementById('stat-signed').textContent = signedMonth;
+    document.getElementById('stat-adult').textContent  = adultMonth;
+    document.getElementById('stat-child').textContent  = childMonth;
+    document.getElementById('stat-total').textContent  = signedMonth + adultMonth + childMonth;
+
+    document.getElementById('stat-signed-total').textContent = `Всього: ${signedAll}`;
+    document.getElementById('stat-adult-total').textContent  = `Всього: ${adultAll}`;
+    document.getElementById('stat-child-total').textContent  = `Всього: ${childAll}`;
+    document.getElementById('stat-total-all').textContent    = `Всього: ${signedAll + adultAll + childAll}`;
+
+    // Розподіл по лікарях
+    const doctors = {};
+
+    monthCases.filter(c => c.status === 'signed').forEach(c => {
+      const name = c.profiles?.full_name || 'Не призначено';
+      if (!doctors[name]) doctors[name] = { cases: 0, adult: 0, child: 0 };
+      doctors[name].cases++;
+    });
+
+    monthAutopsies.forEach(a => {
+      const name = a.profiles?.full_name || 'Не призначено';
+      if (!doctors[name]) doctors[name] = { cases: 0, adult: 0, child: 0 };
+      if (a.autopsy_type === 'adult') doctors[name].adult++;
+      else doctors[name].child++;
+    });
+
+    const tbody = document.getElementById('doctors-tbody');
+    const rows  = Object.entries(doctors);
+
+    if (!rows.length) {
+      tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-muted">Даних за цей місяць немає</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = rows.map(([name, d]) => `
+      <tr>
+        <td class="font-weight-600">${name}</td>
+        <td class="text-center">${d.cases || 0}</td>
+        <td class="text-center">${d.adult || 0}</td>
+        <td class="text-center">${d.child || 0}</td>
+        <td class="text-center font-weight-bold">${(d.cases||0)+(d.adult||0)+(d.child||0)}</td>
+      </tr>
+    `).join('');
+  }
+
+  function bindEvents() {
+    document.getElementById('btn-prev-month').addEventListener('click', () => {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      updateMonthLabel();
+      loadStats();
+    });
+
+    document.getElementById('btn-next-month').addEventListener('click', () => {
+      const now = new Date();
+      if (currentDate.getFullYear() === now.getFullYear() && currentDate.getMonth() === now.getMonth()) return;
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      updateMonthLabel();
+      loadStats();
+    });
+  }
+
+  init();
+</script>
+</body>
+</html>
