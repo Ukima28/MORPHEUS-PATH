@@ -54,5 +54,5 @@ export async function requireRole(...roles) {
 }
 
 export function redirectByRole(role) {
-  window.location.href = `${BASE}/pages/dashboard.html`;
+  window.location.href = `${BASE}/pages/cases.html`;
 }
