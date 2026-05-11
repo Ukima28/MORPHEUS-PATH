@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MORPHEUS PATH — Адмін</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/MORPHEUS-PATH/css/main.css">
+</head>
+<body>
+<div class="app-shell">
+  <div class="main-content">
+    <div class="topbar">
+      <span class="topbar-title">Admin Console</span>
+    </div>
+    <div class="page-content" style="display:flex;align-items:center;justify-content:center;height:100%">
+      <div style="text-align:center;color:#94a3b8">
+        <i class="fa-solid fa-shield-halved" style="font-size:36px;margin-bottom:14px;display:block"></i>
+        <div style="font-size:12px;font-weight:700;color:#64748b;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">Адмін панель</div>
+        <div style="font-size:12px">Буде реалізована в наступній фазі</div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="module">
+  import { requireRole } from '/MORPHEUS-PATH/js/auth.js';
+  import { renderShell } from '/MORPHEUS-PATH/js/shell.js';
+  async function init() {
+    await requireRole('admin');
+    await renderShell('admin');
+  }
+  init();
+</script>
+</body>
+</html>
