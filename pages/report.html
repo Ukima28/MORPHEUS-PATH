@@ -477,17 +477,19 @@ function buildPrintHtml(mode) {
   const dateVal  = document.getElementById('exam-date').value;
   const pathName = document.getElementById('pathologist-name').value;
 
+  const dateFormatted = dateVal
+    ? dateVal.split('-').reverse().join('.')
+    : '____________';
+
   const content = `
-    <div class="header"><strong>Патологоанатомічне заключення № ${caseUpdate.case_number || '—'}</strong></div>
-    <div><strong>Тип матеріалу:</strong> ${matLabel}</div>
-    ${casText ? `<div class="section"><strong>Касети:</strong><br><pre>${casText}</pre></div>` : ''}
+    <div class="header">Патологоанатомічне заключення № ${caseUpdate.case_number || '—'}</div>
     ${reportUpdate.block1_macro ? `<div class="section"><strong>Макро- і мікроскопічний описи:</strong><br><pre>${reportUpdate.block1_macro}</pre></div>` : ''}
     ${reportUpdate.block3_diagnosis ? `<div class="section"><strong>Патологоанатомічний діагноз:</strong><br><pre>${reportUpdate.block3_diagnosis}</pre></div>` : ''}
     ${icdText ? `<div class="section"><strong>ICD-O-4:</strong> ${icdText}</div>` : ''}
     ${reportUpdate.block5_comment ? `<div class="section"><strong>Коментар:</strong><br><pre>${reportUpdate.block5_comment}</pre></div>` : ''}
     <div class="sign-row">
-      <span>Дата: <strong>${dateVal || '____________'}</strong></span>
-      <span>Патолог: <strong>${pathName || '____________'}</strong></span>
+      <span>Дата: <strong>${dateFormatted}</strong></span>
+      <span>Лікар-патологоанатом: <strong>${pathName || '____________'}</strong></span>
       <span>Підпис: <span class="sign-line"></span></span>
     </div>`;
 
