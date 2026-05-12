@@ -56,9 +56,7 @@
           <select class="form-select" id="filter-status">
             <option value="">Всі статуси</option>
             <option value="draft">Чернетка</option>
-            <option value="in_progress">В роботі</option>
             <option value="signed">Підписано</option>
-            <option value="archived">Архів</option>
           </select>
         </div>
         <div class="col-auto">
@@ -68,6 +66,7 @@
             <option value="biopsy_urgent">Біопсія термінова</option>
             <option value="surgical">Операційний матеріал</option>
             <option value="cytology">Цитологія</option>
+            <option value="ihc">ІГХ</option>
             <option value="other">Інше</option>
           </select>
         </div>
@@ -222,7 +221,8 @@
       .from('cases')
       .select(`id, case_number, case_date, patient_id, material_type, status, created_by,
         reports(block1_macro, block3_diagnosis, block4_icd_code, block5_comment),
-        profiles!cases_assigned_pathologist_fkey(full_name),
+        assigned_profile:profiles!cases_assigned_pathologist_fkey(full_name),
+        created_profile:profiles!cases_created_by_fkey(full_name),
         organizations(name)`)
       .order('created_at', { ascending: false });
     if (error) { toast('Помилка завантаження', 'error'); return; }
@@ -242,7 +242,7 @@
     });
     filtered.sort((a, b) => {
       let av = a[sortCol] || '', bv = b[sortCol] || '';
-      if (sortCol === 'pathologist') { av = a.profiles?.full_name || ''; bv = b.profiles?.full_name || ''; }
+      if (sortCol === 'pathologist') { av = a.assigned_profile?.full_name || a.created_profile?.full_name || ''; bv = b.assigned_profile?.full_name || b.created_profile?.full_name || ''; }
       return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
     });
     page = 1;
@@ -272,7 +272,7 @@
         <td><span class="mono">${c.patient_id || '—'}</span></td>
         <td class="text-truncate" style="max-width:200px" title="${diag}">${diagShort}</td>
         <td><span class="badge badge-outline text-${STA_COLOR[c.status] || 'secondary'}">${STA[c.status] || c.status}</span></td>
-        <td class="text-muted">${c.profiles?.full_name || '—'}</td>
+        <td class="text-muted">${c.assigned_profile?.full_name || c.created_profile?.full_name || '—'}</td>
         <td class="text-muted">${MAT[c.material_type] || c.material_type}</td>
         <td>
           <div class="d-flex gap-1 justify-content-end">
@@ -356,7 +356,7 @@
       const comment = c.reports?.block5_comment;
       const icdRaw = c.reports?.block4_icd_code;
       let icdText = '';
-      if (icdRaw) { try { icdText = JSON.parse(icdRaw).map(i => `${i.code} ${i.description}`).join('; '); } catch { icdText = icdRaw; } }
+      if (icdRaw) { try { icdText = JSON.parse(icdRaw).map(i => `${i.code}${i.diagnosis_uk ? ' ' + i.diagnosis_uk : ''}`).join('; '); } catch { icdText = icdRaw; } }
       const date = c.case_date ? c.case_date.split('-').reverse().join('.') : '____________';
       return `
         <div class="header">Патологоанатомічне заключення № ${c.case_number || '—'}</div>
@@ -366,7 +366,7 @@
         ${comment ? `<div class="section"><strong>Коментар:</strong><br><pre>${comment}</pre></div>` : ''}
         <div class="sign-row">
           <span>Дата: <strong>${date}</strong></span>
-          <span>Лікар-патологоанатом: <strong>${c.profiles?.full_name || '____________'}</strong></span>
+          <span>Лікар-патологоанатом: <strong>${c.assigned_profile?.full_name || c.created_profile?.full_name || '____________'}</strong></span>
           <span>Підпис: <span class="sign-line"></span></span>
         </div>`;
     };
