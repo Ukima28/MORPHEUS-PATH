@@ -24,7 +24,7 @@
           <div class="text-muted mt-1">Патологоанатомічні заключення лабораторії</div>
         </div>
         <div class="col-auto ms-auto d-print-none">
-          <button class="btn btn-primary" id="btn-new-case">
+          <button class="btn btn-primary" id="btn-new-case" data-bs-toggle="modal" data-bs-target="#modal-new-case">
             <i class="ti ti-plus"></i>
             Нове заключення
           </button>
@@ -370,7 +370,7 @@
     }).select().single();
     if (error) { errEl.textContent = 'Помилка. Перевірте номер дослідження.'; errEl.classList.remove('d-none'); return; }
     await supabase.from('reports').insert({ case_id: data.id });
-    window.bootstrap.Modal.getInstance(document.getElementById('modal-new-case')).hide();
+    document.querySelector('#modal-new-case .btn-close').click();
     toast('Заключення створено');
     window.location.href = `/MORPHEUS-PATH/pages/report.html?id=${data.id}`;
   }
@@ -382,7 +382,7 @@
   }
 
   function bindEvents() {
-    document.getElementById('btn-new-case')?.addEventListener('click', () => new window.bootstrap.Modal(document.getElementById('modal-new-case')).show());
+    // modal opens via data-bs-toggle
     document.getElementById('btn-modal-save').addEventListener('click', createCase);
     document.getElementById('filter-status').addEventListener('change', applyFilters);
     document.getElementById('filter-material').addEventListener('change', applyFilters);
