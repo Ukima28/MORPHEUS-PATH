@@ -214,6 +214,8 @@
       .order('created_at', { ascending: false });
     if (error) { toast('Помилка завантаження', 'error'); return; }
     allCases = data || [];
+    selected.clear();
+    updateFloatingBar();
     applyFilters();
   }
 
@@ -310,10 +312,9 @@
         const { error } = await supabase.from('cases').delete().eq('id', btn.dataset.id);
         if (error) { toast('Помилка видалення', 'error'); return; }
         toast('Заключення видалено');
-        allCases = allCases.filter(c => c.id !== btn.dataset.id);
         selected.delete(btn.dataset.id);
         updateFloatingBar();
-        applyFilters();
+        await loadCases();
       });
     });
   }
@@ -379,21 +380,7 @@
     await supabase.from('reports').insert({ case_id: data.id });
     document.querySelector('#modal-new-case .btn-close').click();
     toast('Заключення створено');
-    // Додаємо новий запис локально
-    allCases.unshift({
-      id: data.id,
-      case_number: data.case_number,
-      case_date: data.case_date,
-      patient_id: data.patient_id,
-      material_type: data.material_type,
-      status: 'draft',
-      created_by: profile.id,
-      reports: { block3_diagnosis: null },
-      profiles: { full_name: profile.full_name },
-      organizations: profile.organizations,
-    });
-    applyFilters();
-    // Переходимо на форму заключення
+    await loadCases();
     window.location.href = `/MORPHEUS-PATH/pages/report.html?id=${data.id}`;
   }
 
@@ -430,10 +417,9 @@
       if (error) { toast('Помилка видалення', 'error'); return; }
       const deletedIds = [...selected];
       toast(`Видалено ${deletedIds.length} заключень`);
-      allCases = allCases.filter(c => !deletedIds.includes(c.id));
       selected.clear();
       updateFloatingBar();
-      applyFilters();
+      await loadCases();
     });
   }
 
