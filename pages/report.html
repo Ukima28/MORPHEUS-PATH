@@ -291,7 +291,7 @@ function renderForm() {
 
   // Readonly якщо: підписано | реєстратор | laborant не в draft | pathologist чужий запис
   const isReadOnly =
-    isSigned ||
+    (isSigned && !isAdmin) ||
     isRegistrar ||
     (isLaborant && caseData.status !== 'draft') ||
     (isPathologist && !isOwner);
@@ -306,7 +306,7 @@ function renderForm() {
   }
 
   // Якщо підписано — показуємо інфо банер
-  if (isSigned) {
+  if (isSigned && !isAdmin) {
     const banner = document.createElement('div');
     banner.className = 'alert alert-success d-flex align-items-center mb-3 no-print';
     banner.innerHTML = '<i class="ti ti-circle-check me-2"></i><strong>Заключення підписано.</strong>&nbsp;Редагування заблоковано.';
@@ -325,16 +325,16 @@ function renderCassettes() {
   }
   tbody.innerHTML = cassettes.map((c, i) => `
     <tr>
-      <td><input type="text" class="form-control form-control-sm cassette-number" data-i="${i}" value="${c.number || ''}" placeholder="A1"></td>
-      <td><input type="text" class="form-control form-control-sm cassette-desc" data-i="${i}" value="${c.description || ''}" placeholder="Опис касети..."></td>
-      <td><button class="btn-remove-row btn-del-cassette" data-i="${i}" title="Видалити"><i class="ti ti-x"></i></button></td>
+      <td style="width:140px"><input type="text" class="form-control form-control-sm cassette-number" data-i="${i}" value="${c.number || ''}" placeholder="A1"></td>
+      <td><textarea class="form-control form-control-sm cassette-desc" data-i="${i}" rows="1" style="resize:vertical;min-height:34px" placeholder="Опис касети...">${c.description || ''}</textarea></td>
+      <td style="width:40px"><button class="btn btn-sm btn-ghost-secondary btn-del-cassette" data-i="${i}" title="Видалити"><i class="ti ti-trash" style="color:#1a1a1a"></i></button></td>
     </tr>`).join('');
 
   // Обробники для касет
   document.querySelectorAll('.cassette-number').forEach(el =>
     el.addEventListener('input', e => { cassettes[+e.target.dataset.i].number = e.target.value; }));
   document.querySelectorAll('.cassette-desc').forEach(el =>
-    el.addEventListener('input', e => { cassettes[+e.target.dataset.i].description = e.target.value; }));
+    el.addEventListener('change', e => { cassettes[+e.target.dataset.i].description = e.target.value; }));
   document.querySelectorAll('.btn-del-cassette').forEach(el =>
     el.addEventListener('click', e => {
       cassettes.splice(+e.currentTarget.dataset.i, 1);
@@ -379,8 +379,7 @@ document.getElementById('icd-search').addEventListener('input', async e => {
     results.querySelectorAll('.icd-item').forEach(btn => {
       btn.addEventListener('click', () => {
         if (btn.dataset.code === 'manual') {
-          const manual = prompt('Введіть код вручну:');
-          if (manual?.trim()) selectIcd(manual.trim(), '');
+          openManualModal();
         } else {
           selectIcd(btn.dataset.code, btn.dataset.uk);
         }
@@ -413,8 +412,8 @@ function renderIcdSelected() {
     <div class="d-flex align-items-center gap-2 mb-1 p-2 bg-light rounded">
       <span class="mono text-primary fw-semibold">${i.code}</span>
       <span class="text-muted small flex-fill">${i.diagnosis_uk || ''}</span>
-      <button class="btn btn-sm btn-ghost-secondary icd-remove" data-idx="${idx}" title="Видалити">
-        <i class="ti ti-trash" style="color:#1a1a1a"></i>
+      <button class="btn btn-sm icd-remove" data-idx="${idx}" title="Видалити" style="color:#1a1a1a;border:none;background:none;padding:2px 6px">
+        <i class="ti ti-trash"></i>
       </button>
     </div>`).join('');
   el.querySelectorAll('.icd-remove').forEach(btn =>
@@ -473,6 +472,44 @@ document.getElementById('template-search').addEventListener('input', async e => 
   }, 300);
 });
 
+
+// ── РУЧНЕ ВВЕДЕННЯ ICD ──
+function openManualModal() {
+  const modal = document.getElementById('modal-manual-icd');
+  const input = document.getElementById('manual-icd-input');
+  input.value = '';
+  modal.classList.add('show');
+  modal.style.display = 'block';
+  document.body.classList.add('modal-open');
+  if (!document.getElementById('manual-icd-bd')) {
+    const bd = document.createElement('div');
+    bd.className = 'modal-backdrop fade show';
+    bd.id = 'manual-icd-bd';
+    document.body.appendChild(bd);
+  }
+  setTimeout(() => input.focus(), 100);
+}
+
+function closeManualModal() {
+  document.getElementById('modal-manual-icd').classList.remove('show');
+  document.getElementById('modal-manual-icd').style.display = 'none';
+  document.body.classList.remove('modal-open');
+  document.getElementById('manual-icd-bd')?.remove();
+  document.getElementById('icd-results').style.display = 'none';
+  document.getElementById('icd-search').value = '';
+}
+
+document.getElementById('manual-icd-close').addEventListener('click', closeManualModal);
+document.getElementById('manual-icd-cancel').addEventListener('click', closeManualModal);
+document.getElementById('manual-icd-confirm').addEventListener('click', () => {
+  const val = document.getElementById('manual-icd-input').value.trim();
+  if (val) selectIcd(val, '');
+  closeManualModal();
+});
+document.getElementById('manual-icd-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('manual-icd-confirm').click();
+});
+
 // ── ЗБІР ДАНИХ ──
 function collectData() {
   return {
@@ -517,7 +554,7 @@ function buildPrintHtml(mode) {
   const { caseUpdate, reportUpdate } = collectData();
   const matLabel = document.getElementById('material-type').options[document.getElementById('material-type').selectedIndex]?.text || '';
   const casText  = cassettes.map(c => `${c.number} — ${c.description}`).join('\n');
-  const icdText  = icdSelected.map(i => `${i.code} ${i.description}`).join('; ');
+  const icdText  = icdSelected.map(i => `${i.code}${i.diagnosis_uk ? ' ' + i.diagnosis_uk : ''}`).join('; ');
   const dateVal  = document.getElementById('exam-date').value;
   const pathName = document.getElementById('pathologist-name').value;
 
@@ -559,7 +596,28 @@ function buildPrintHtml(mode) {
   }
 
   return `<!DOCTYPE html><html lang="uk"><head><meta charset="UTF-8">
-    <style>${css}</style></head><body>${body}</body></html>`;
+    <style>${css}</style></head><body>${body}
+<!-- Modal: Ввести код вручну -->
+<div class="modal modal-blur fade" id="modal-manual-icd" tabindex="-1">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Ввести код вручну</h5>
+        <button type="button" class="btn-close" id="manual-icd-close"></button>
+      </div>
+      <div class="modal-body">
+        <label class="form-label">Код ICD-O-4</label>
+        <input type="text" class="form-control" id="manual-icd-input" placeholder="напр. 8140/3">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn me-auto" id="manual-icd-cancel">Скасувати</button>
+        <button type="button" class="btn btn-primary" id="manual-icd-confirm">Додати</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body></html>`;
 }
 
 // ── BIND EVENTS ──
@@ -605,5 +663,26 @@ function bindEvents() {
 
 init();
 </script>
+
+<!-- Modal: Ввести код вручну -->
+<div class="modal modal-blur fade" id="modal-manual-icd" tabindex="-1">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Ввести код вручну</h5>
+        <button type="button" class="btn-close" id="manual-icd-close"></button>
+      </div>
+      <div class="modal-body">
+        <label class="form-label">Код ICD-O-4</label>
+        <input type="text" class="form-control" id="manual-icd-input" placeholder="напр. 8140/3">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn me-auto" id="manual-icd-cancel">Скасувати</button>
+        <button type="button" class="btn btn-primary" id="manual-icd-confirm">Додати</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
