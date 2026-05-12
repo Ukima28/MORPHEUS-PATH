@@ -11,11 +11,11 @@ const ROLE_LABELS = {
 
 const NAV = [
   { id: 'dashboard',     label: 'Dashboard',                   icon: 'home',          roles: ['admin','pathologist','laborant','registrar'], href: `${BASE}/pages/dashboard.html` },
-  { id: 'cases',         label: 'Журнал заключень',            icon: 'clipboard-list', roles: ['admin','pathologist','laborant','registrar'], href: `${BASE}/pages/cases.html` },
-  { id: 'autopsies',     label: 'Журнал розтинів',             icon: 'notebook',       roles: ['admin','pathologist','laborant','registrar'], href: `${BASE}/pages/autopsies.html` },
-  { id: 'autopsy-adult', label: 'Протокол розтину (дорослий)', icon: 'file-medical',   roles: ['admin','pathologist','laborant'],            href: `${BASE}/pages/autopsy-adult.html` },
-  { id: 'autopsy-child', label: 'Протокол розтину (дитячий)',  icon: 'file-medical',   roles: ['admin','pathologist','laborant'],            href: `${BASE}/pages/autopsy-child.html` },
-  { id: 'cap',           label: 'Протоколи CAP',               icon: 'certificate',    roles: ['admin','pathologist','laborant'],            href: `${BASE}/pages/cap.html` },
+  { id: 'cases',         label: 'Журнал заключень',            icon: 'clipboard', roles: ['admin','pathologist','laborant','registrar'], href: `${BASE}/pages/cases.html` },
+  { id: 'autopsies',     label: 'Журнал розтинів',             icon: 'book',       roles: ['admin','pathologist','laborant','registrar'], href: `${BASE}/pages/autopsies.html` },
+  { id: 'autopsy-adult', label: 'Протокол розтину (дорослий)', icon: 'file-plus',   roles: ['admin','pathologist','laborant'],            href: `${BASE}/pages/autopsy-adult.html` },
+  { id: 'autopsy-child', label: 'Протокол розтину (дитячий)',  icon: 'file-plus',   roles: ['admin','pathologist','laborant'],            href: `${BASE}/pages/autopsy-child.html` },
+  { id: 'cap',           label: 'Протоколи CAP',               icon: 'award',    roles: ['admin','pathologist','laborant'],            href: `${BASE}/pages/cap.html` },
   { id: 'knowledge',     label: 'База знань',                  icon: 'books',          roles: ['admin','pathologist','laborant','registrar'], href: `${BASE}/pages/knowledge.html` },
   { id: 'admin',         label: 'Адмін панель',                icon: 'shield',         roles: ['admin'],                                    href: `${BASE}/pages/admin.html` },
 ];
