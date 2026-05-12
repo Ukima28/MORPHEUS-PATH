@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+body { font-family: 'Inter', sans-serif !important; }
+
+.mono {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+}
+
+.table-clickable tbody tr { cursor: pointer; }
+
+.floating-bar {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1050;
+  white-space: nowrap;
+}
+
+@media print {
+  header.navbar, .btn, .floating-bar, .no-print { display: none !important; }
+}
