@@ -88,7 +88,21 @@ export async function renderShell(activePage) {
 
   document.getElementById('btn-logout')?.addEventListener('click', e => {
     e.preventDefault();
-    logout();
+    document.body.style.opacity = '0';
+    setTimeout(() => logout(), 180);
+  });
+
+  // Плавний перехід між сторінками
+  document.addEventListener('click', e => {
+    const link = e.target.closest('a[href]');
+    if (!link) return;
+    const href = link.getAttribute('href');
+    if (!href || href.startsWith('#') || href.startsWith('javascript') || link.getAttribute('data-bs-toggle')) return;
+    if (href.startsWith('/MORPHEUS-PATH') || href.startsWith('http') === false) {
+      e.preventDefault();
+      document.body.style.opacity = '0';
+      setTimeout(() => { window.location.href = href; }, 180);
+    }
   });
 
   return profile;
