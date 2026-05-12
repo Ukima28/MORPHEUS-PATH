@@ -50,14 +50,14 @@ export async function renderShell(activePage) {
         <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
           <a href="${BASE}/pages/cases.html" class="text-decoration-none">
             <span class="fw-bold" style="font-size:13px;letter-spacing:.06em;line-height:1.2;display:block">
-              MORPHEUS<br>PATHOLOGY
+              MORPHEОS<br>PATHOLOGY
             </span>
           </a>
         </h1>
         <div class="navbar-nav flex-row order-md-last">
           <div class="nav-item dropdown">
             <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown">
-              <span class="avatar avatar-sm" style="background:var(--tblr-primary)">
+              <span class="avatar avatar-sm" style="background:var(--tblr-primary);color:#ffffff">
                 ${initials(profile.full_name)}
               </span>
               <div class="d-none d-xl-block ps-2">
