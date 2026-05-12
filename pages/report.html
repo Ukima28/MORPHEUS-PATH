@@ -325,12 +325,12 @@ function renderCassettes() {
   }
   emptyMsg.style.display = 'none';
   container.innerHTML = cassettes.map((c, i) => `
-    <div class="d-flex gap-2 align-items-start mb-2">
+    <div class="d-flex gap-2 align-items-stretch mb-2">
       <input type="text" class="form-control cassette-number" data-i="${i}"
         value="${c.number || ''}" placeholder="A1"
-        style="flex:1;font-family:'JetBrains Mono',monospace;font-size:13px">
+        style="width:7ch;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:13px;min-height:72px">
       <textarea class="form-control cassette-desc" data-i="${i}" rows="2"
-        style="flex:1;resize:vertical;font-size:13px;line-height:1.6"
+        style="flex:1;resize:vertical;font-size:13px;line-height:1.6;min-height:72px"
         placeholder="Опис касети...">${c.description || ''}</textarea>
       <button class="btn-icon-delete btn-del-cassette" data-i="${i}" title="Видалити"
         style="flex-shrink:0;margin-top:4px">
@@ -615,24 +615,25 @@ function buildPrintHtml(mode) {
     </div>`;
 
   const css = `
-    @page { size:A4; margin:18mm 22mm; }
-    body { font-family:Arial,sans-serif; font-size:10pt; color:#000; line-height:1.6; }
-    .header { font-size:11pt; font-weight:bold; margin-bottom:4mm; }
-    .section { margin-top:4mm; }
-    pre { font-family:Arial,sans-serif; font-size:10pt; white-space:pre-wrap; margin:1mm 0; }
-    .sign-row { margin-top:10mm; display:flex; justify-content:space-between; }
-    .sign-line { display:inline-block; border-bottom:1px solid #000; min-width:140px; }
-    .separator { border:none; border-top:1px dashed #aaa; margin:6mm 0; }`;
+    @page { size:A4; margin:15mm 20mm; }
+    body { font-family:Arial,sans-serif; font-size:8.5pt; color:#000; line-height:1.5; margin:0; }
+    .report-block { page-break-inside:avoid; break-inside:avoid; }
+    .header { font-size:9.5pt; font-weight:bold; margin-bottom:3mm; }
+    .section { margin-top:3mm; }
+    pre { font-family:Arial,sans-serif; font-size:8.5pt; white-space:pre-wrap; margin:1mm 0; }
+    .sign-row { margin-top:8mm; display:flex; justify-content:space-between; font-size:8pt; }
+    .sign-line { display:inline-block; border-bottom:1px solid #000; min-width:120px; }
+    .separator { border:none; border-top:1px dashed #aaa; margin:4mm 0; }`;
 
   let body = '';
   if (mode === 'journal') {
-    body = `<div style="page-break-inside:avoid">${content}</div>`;
+    body = `<div class="report-block">${content}</div>`;
   } else {
     // Направлення — верхня половина порожня, нижня — заключення
     body = `
       <div style="min-height:130mm;display:block"></div>
       <hr style="border:none;border-top:1px dashed #aaa;margin:4mm 0">
-      <div>${content}</div>`;
+      <div class="report-block">${content}</div>`;
   }
 
   return `<!DOCTYPE html><html lang="uk"><head><meta charset="UTF-8">
