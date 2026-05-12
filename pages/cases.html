@@ -303,13 +303,7 @@
   }
 
   function bindRowEvents() {
-    document.querySelectorAll('.case-row').forEach(tr => {
-      tr.addEventListener('click', e => {
-        if (e.target.closest('.row-check, .btn-del, a')) return;
-        if (selected.size >= 2) return;
-        window.location.href = `/MORPHEUS-PATH/pages/report.html?id=${tr.dataset.id}`;
-      });
-    });
+    // Клік по рядку — тільки через кнопку "Відкрити"
     document.querySelectorAll('.row-check').forEach(cb => {
       cb.addEventListener('change', () => {
         if (cb.checked) selected.add(cb.dataset.id); else selected.delete(cb.dataset.id);
@@ -342,35 +336,55 @@
   function printCases(mode) {
     const data = allCases.filter(c => [...selected].includes(c.id));
     if (!data.length) return;
-    const caseHtml = c => `
-      <div style="margin-bottom:8mm">
-        <div style="font-weight:700;font-size:11pt">№ ${c.case_number || '—'} від ${formatDate(c.case_date)}</div>
-        ${c.patient_id ? `<div>ID пацієнта: ${c.patient_id}</div>` : ''}
-        ${c.reports?.block3_diagnosis ? `<div style="margin-top:3mm"><strong>Діагноз:</strong> ${c.reports.block3_diagnosis}</div>` : ''}
-        <div style="margin-top:8mm;display:flex;justify-content:space-between">
-          <span>Патолог: ${c.profiles?.full_name || '—'}</span>
-          <span>Підпис: ___________________</span>
-          <span>Дата: ____________</span>
-        </div>
-      </div>`;
-    const base = body => `<!DOCTYPE html><html><head><meta charset="UTF-8">
-      <style>@page{size:A4;margin:18mm 22mm}body{font-family:Arial,sans-serif;font-size:10pt;line-height:1.5}</style>
-        <style>
-    body { opacity: 0; transition: opacity .05s ease; }
-    body.loaded { opacity: 1; }
-  </style>
-</head><body>${body}</body></html>`;
-    let content;
+
+    const css = `
+      @page { size:A4; margin:18mm 22mm; }
+      body { font-family:Arial,sans-serif; font-size:10pt; color:#000; line-height:1.6; }
+      .header { font-size:11pt; font-weight:bold; margin-bottom:4mm; }
+      .section { margin-top:4mm; }
+      pre { font-family:Arial,sans-serif; font-size:10pt; white-space:pre-wrap; margin:1mm 0; }
+      .sign-row { margin-top:10mm; display:flex; justify-content:space-between; }
+      .sign-line { display:inline-block; border-bottom:1px solid #000; min-width:140px; }
+      .separator { border:none; border-top:1px dashed #aaa; margin:6mm 0; }`;
+
+    const caseHtml = c => {
+      const diag = c.reports?.block3_diagnosis;
+      const macro = c.reports?.block1_macro;
+      const comment = c.reports?.block5_comment;
+      const icdRaw = c.reports?.block4_icd_code;
+      let icdText = '';
+      if (icdRaw) { try { icdText = JSON.parse(icdRaw).map(i => `${i.code} ${i.description}`).join('; '); } catch { icdText = icdRaw; } }
+      const date = c.case_date ? c.case_date.split('-').reverse().join('.') : '____________';
+      return `
+        <div class="header">Патологоанатомічне заключення № ${c.case_number || '—'}</div>
+        ${macro ? `<div class="section"><strong>Макро- і мікроскопічний описи:</strong><br><pre>${macro}</pre></div>` : ''}
+        ${diag  ? `<div class="section"><strong>Патологоанатомічний діагноз:</strong><br><pre>${diag}</pre></div>` : ''}
+        ${icdText ? `<div class="section"><strong>ICD-O-4:</strong> ${icdText}</div>` : ''}
+        ${comment ? `<div class="section"><strong>Коментар:</strong><br><pre>${comment}</pre></div>` : ''}
+        <div class="sign-row">
+          <span>Дата: <strong>${date}</strong></span>
+          <span>Лікар-патологоанатом: <strong>${c.profiles?.full_name || '____________'}</strong></span>
+          <span>Підпис: <span class="sign-line"></span></span>
+        </div>`;
+    };
+
+    let body = '';
     if (mode === 'direction') {
-      content = data.map(c => `<table style="width:100%;height:calc(297mm - 36mm);border-collapse:collapse;page-break-after:always">
-        <tr style="height:50%"><td></td></tr>
-        <tr style="height:50%;vertical-align:top"><td style="padding-top:6mm;border-top:1px solid #ccc">${caseHtml(c)}</td></tr>
-      </table>`).join('');
+      body = data.map(c => `
+        <table style="width:100%;height:calc(297mm - 36mm);border-collapse:collapse;page-break-after:always">
+          <tr style="height:50%"><td></td></tr>
+          <tr><td><hr class="separator"></td></tr>
+          <tr style="height:50%;vertical-align:top"><td style="padding-top:6mm">${caseHtml(c)}</td></tr>
+        </table>`).join('');
     } else {
-      content = data.map(c => `<div style="page-break-inside:avoid;margin-bottom:10mm;padding-bottom:10mm;border-bottom:1px solid #ccc">${caseHtml(c)}</div>`).join('');
+      body = data.map(c => `
+        <div style="page-break-inside:avoid;margin-bottom:10mm;padding-bottom:10mm;border-bottom:1px solid #ccc">
+          ${caseHtml(c)}
+        </div>`).join('');
     }
+
     const w = window.open('');
-    w.document.write(base(content));
+    w.document.write(`<!DOCTYPE html><html lang="uk"><head><meta charset="UTF-8"><style>${css}</style></head><body>${body}</body></html>`);
     w.document.close();
     w.print();
   }
