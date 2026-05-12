@@ -89,7 +89,7 @@ export async function renderShell(activePage) {
   document.getElementById('btn-logout')?.addEventListener('click', e => {
     e.preventDefault();
     document.body.style.opacity = '0';
-    setTimeout(() => logout(), 180);
+    setTimeout(() => logout(), 50);
   });
 
   // Плавний перехід між сторінками
