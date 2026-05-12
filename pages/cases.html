@@ -122,12 +122,15 @@
         <i class="ti ti-x me-1"></i>Скинути вибір
       </button>
       <div class="vr"></div>
-      <button class="btn btn-sm" id="float-print-list">
-        📋 Журнал
-      </button>
-      <button class="btn btn-sm" id="float-print-dir">
-        📄 Направлення
-      </button>
+      <div class="dropdown">
+        <button class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+          <i class="ti ti-printer me-1"></i>Друк
+        </button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#" id="float-print-list">📋 Журнал</a>
+          <a class="dropdown-item" href="#" id="float-print-dir">📄 Направлення</a>
+        </div>
+      </div>
       <button class="btn btn-sm btn-primary" id="float-edit">
         <i class="ti ti-edit"></i>Редагувати
       </button>
@@ -218,7 +221,7 @@
     const { data, error } = await supabase
       .from('cases')
       .select(`id, case_number, case_date, patient_id, material_type, status, created_by,
-        reports(block3_diagnosis),
+        reports(block1_macro, block3_diagnosis, block4_icd_code, block5_comment),
         profiles!cases_assigned_pathologist_fkey(full_name),
         organizations(name)`)
       .order('created_at', { ascending: false });
@@ -464,6 +467,7 @@
     // Скинути вибір
     document.getElementById('float-clear').addEventListener('click', () => {
       selected.clear();
+      document.getElementById('check-all').checked = false;
       updateFloatingBar();
       renderTable();
     });
@@ -480,8 +484,8 @@
       if (sortCol === col) sortDir = sortDir === 'asc' ? 'desc' : 'asc'; else { sortCol = col; sortDir = 'asc'; }
       applyFilters();
     }));
-    document.getElementById('float-print-dir').addEventListener('click', () => printCases('direction'));
-    document.getElementById('float-print-list').addEventListener('click', () => printCases('list'));
+    document.getElementById('float-print-dir').addEventListener('click', e => { e.preventDefault(); printCases('direction'); });
+    document.getElementById('float-print-list').addEventListener('click', e => { e.preventDefault(); printCases('list'); });
     document.getElementById('float-edit').addEventListener('click', () => {
       const id = [...selected][0];
       if (id) window.location.href = `/MORPHEUS-PATH/pages/report.html?id=${id}`;
