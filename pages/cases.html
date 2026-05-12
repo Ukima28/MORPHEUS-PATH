@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MORPHEUS PATH — Журнал заключень</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/css/tabler.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.26.0/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.26.0/dist/tabler-icons.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/MORPHEUS-PATH/css/morpheus.css">
 </head>
@@ -23,7 +25,7 @@
         <div class="col-auto ms-auto d-print-none">
           <button class="btn btn-primary" id="btn-new-case">
             <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-              <use href="https://cdn.jsdelivr.net/npm/@tabler/icons@3.26.0/icons/sprite.svg#tabler-plus"/>
+              <!-- ti-plus -->
             </svg>
             Нове заключення
           </button>
@@ -41,7 +43,7 @@
           <div class="input-group">
             <span class="input-group-text">
               <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-                <use href="https://cdn.jsdelivr.net/npm/@tabler/icons@3.26.0/icons/sprite.svg#tabler-search"/>
+                <!-- ti-search -->
               </svg>
             </span>
             <input type="text" id="search-input" class="form-control" placeholder="Пошук по номеру, ID пацієнта, діагнозу...">
@@ -113,22 +115,22 @@
       <div class="vr"></div>
       <button class="btn btn-sm" id="float-print-dir">
         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-          <use href="https://cdn.jsdelivr.net/npm/@tabler/icons@3.26.0/icons/sprite.svg#tabler-printer"/>
+          <!-- ti-printer -->
         </svg>Направлення
       </button>
       <button class="btn btn-sm" id="float-print-list">
         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-          <use href="https://cdn.jsdelivr.net/npm/@tabler/icons@3.26.0/icons/sprite.svg#tabler-list"/>
+          <!-- ti-list -->
         </svg>Журнал
       </button>
       <button class="btn btn-sm btn-primary" id="float-edit">
         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-          <use href="https://cdn.jsdelivr.net/npm/@tabler/icons@3.26.0/icons/sprite.svg#tabler-edit"/>
+          <!-- ti-edit -->
         </svg>Редагувати
       </button>
       <button class="btn btn-sm btn-danger" id="float-delete">
         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-          <use href="https://cdn.jsdelivr.net/npm/@tabler/icons@3.26.0/icons/sprite.svg#tabler-trash"/>
+          <!-- ti-trash -->
         </svg>Видалити
       </button>
     </div>
@@ -270,7 +272,7 @@
             <a href="/MORPHEUS-PATH/pages/report.html?id=${c.id}" class="btn btn-sm">Відкрити</a>
             ${canDel ? `<button class="btn btn-sm btn-ghost-danger btn-del" data-id="${c.id}">
               <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-                <use href="https://cdn.jsdelivr.net/npm/@tabler/icons@3.26.0/icons/sprite.svg#tabler-trash"/>
+                <!-- ti-trash -->
               </svg>
             </button>` : ''}
           </div>
