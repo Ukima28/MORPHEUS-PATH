@@ -185,11 +185,20 @@
         <button type="button" class="btn-close" id="tmpl-close"></button>
       </div>
       <div class="modal-body">
-        <div class="input-group mb-3">
-          <span class="input-group-text"><i class="ti ti-search"></i></span>
-          <input type="text" class="form-control" id="template-search" placeholder="Пошук по назві або системі/органу...">
+        <div class="row g-2 mb-3">
+          <div class="col">
+            <div class="input-group">
+              <span class="input-group-text"><i class="ti ti-search"></i></span>
+              <input type="text" class="form-control" id="template-search" placeholder="Пошук по назві...">
+            </div>
+          </div>
+          <div class="col-auto">
+            <select class="form-select" id="template-organ-filter">
+              <option value="">Всі системи/органи</option>
+            </select>
+          </div>
         </div>
-        <div id="template-list" class="list-group" style="max-height:400px;overflow-y:auto">
+        <div id="template-list" class="list-group" style="max-height:360px;overflow-y:auto">
           <div class="text-center py-4 text-muted">Введіть текст для пошуку</div>
         </div>
       </div>
@@ -319,9 +328,9 @@ function renderCassettes() {
     <div class="d-flex gap-2 align-items-start mb-2">
       <input type="text" class="form-control cassette-number" data-i="${i}"
         value="${c.number || ''}" placeholder="A1"
-        style="width:110px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:13px">
+        style="flex:1;font-family:'JetBrains Mono',monospace;font-size:13px">
       <textarea class="form-control cassette-desc" data-i="${i}" rows="2"
-        style="resize:vertical;font-size:13px;line-height:1.6"
+        style="flex:1;resize:vertical;font-size:13px;line-height:1.6"
         placeholder="Опис касети...">${c.description || ''}</textarea>
       <button class="btn-icon-delete btn-del-cassette" data-i="${i}" title="Видалити"
         style="flex-shrink:0;margin-top:4px">
@@ -422,7 +431,7 @@ function renderIcdSelected() {
 }
 
 // ── ШАБЛОНИ ──
-function openTemplateModal() {
+async function openTemplateModal() {
   document.getElementById('modal-templates').classList.add('show');
   document.getElementById('modal-templates').style.display = 'block';
   document.body.classList.add('modal-open');
@@ -431,6 +440,21 @@ function openTemplateModal() {
     bd.className = 'modal-backdrop fade show';
     bd.id = 'tmpl-bd';
     document.body.appendChild(bd);
+  }
+  // Завантажуємо унікальні system_organ один раз
+  const sel = document.getElementById('template-organ-filter');
+  if (sel.options.length <= 1) {
+    const { data } = await supabase
+      .from('text_templates')
+      .select('system_organ')
+      .eq('is_active', true)
+      .order('system_organ');
+    const organs = [...new Set((data || []).map(t => t.system_organ).filter(Boolean))];
+    organs.forEach(o => {
+      const opt = document.createElement('option');
+      opt.value = o; opt.textContent = o;
+      sel.appendChild(opt);
+    });
   }
 }
 
@@ -443,31 +467,49 @@ function closeTemplateModal() {
   document.getElementById('template-list').innerHTML = '<div class="text-center py-4 text-muted">Введіть текст для пошуку</div>';
 }
 
-document.getElementById('template-search').addEventListener('input', async e => {
+async function searchTemplates() {
+  const q     = document.getElementById('template-search').value.trim();
+  const organ = document.getElementById('template-organ-filter').value;
+  const list  = document.getElementById('template-list');
+
+  if (!q && !organ) {
+    list.innerHTML = '<div class="text-center py-4 text-muted">Введіть текст або оберіть систему/орган</div>';
+    return;
+  }
+
+  let query = supabase.from('text_templates').select('*').eq('is_active', true);
+  if (organ) query = query.eq('system_organ', organ);
+  if (q)     query = query.or(`name.ilike.%${q}%,system_organ.ilike.%${q}%`);
+  query = query.limit(30);
+
+  const { data } = await query;
+  if (!data?.length) { list.innerHTML = '<div class="list-group-item text-muted">Шаблонів не знайдено</div>'; return; }
+
+  list.innerHTML = data.map((t, idx) => `
+    <button class="list-group-item list-group-item-action tmpl-item" data-idx="${idx}">
+      <div class="fw-semibold">${t.name}</div>
+      <div class="text-muted small">${t.system_organ || ''}</div>
+    </button>`).join('');
+
+  list.querySelectorAll('.tmpl-item').forEach((btn, idx) =>
+    btn.addEventListener('click', () => {
+      const t = data[idx];
+      if (t.micro_description) document.getElementById('block2').value = t.micro_description;
+      if (t.diagnosis)         document.getElementById('block3').value = t.diagnosis;
+      if (t.icd_code) { icdSelected = [{ code: t.icd_code, diagnosis_uk: '' }]; renderIcdSelected(); }
+      closeTemplateModal();
+      toast('Шаблон застосовано');
+    }));
+}
+
+document.getElementById('template-search').addEventListener('input', () => {
   clearTimeout(templateTimer);
-  const q = e.target.value.trim();
-  if (!q) { document.getElementById('template-list').innerHTML = '<div class="text-center py-4 text-muted">Введіть текст для пошуку</div>'; return; }
-  templateTimer = setTimeout(async () => {
-    const { data } = await supabase.from('text_templates')
-      .select('*').eq('is_active', true)
-      .or(`name.ilike.%${q}%,system_organ.ilike.%${q}%`).limit(20);
-    const list = document.getElementById('template-list');
-    if (!data?.length) { list.innerHTML = '<div class="list-group-item text-muted">Шаблонів не знайдено</div>'; return; }
-    list.innerHTML = data.map((t, idx) => `
-      <button class="list-group-item list-group-item-action tmpl-item" data-idx="${idx}">
-        <div class="fw-semibold">${t.name}</div>
-        <div class="text-muted small">${t.system_organ || ''}</div>
-      </button>`).join('');
-    list.querySelectorAll('.tmpl-item').forEach((btn, idx) =>
-      btn.addEventListener('click', () => {
-        const t = data[idx];
-        if (t.micro_description) document.getElementById('block2').value = t.micro_description;
-        if (t.diagnosis)         document.getElementById('block3').value = t.diagnosis;
-        if (t.icd_code) { icdSelected = [{ code: t.icd_code, description: '' }]; renderIcdSelected(); }
-        closeTemplateModal();
-        toast('Шаблон застосовано');
-      }));
-  }, 300);
+  templateTimer = setTimeout(searchTemplates, 300);
+});
+
+document.getElementById('template-organ-filter').addEventListener('change', () => {
+  clearTimeout(templateTimer);
+  templateTimer = setTimeout(searchTemplates, 100);
 });
 
 
@@ -552,7 +594,7 @@ function buildPrintHtml(mode) {
   const { caseUpdate, reportUpdate } = collectData();
   const matLabel = document.getElementById('material-type').options[document.getElementById('material-type').selectedIndex]?.text || '';
   const casText  = cassettes.map(c => `${c.number} — ${c.description}`).join('\n');
-  const icdText  = icdSelected.map(i => `${i.code}${i.diagnosis_uk ? ' ' + i.diagnosis_uk : ''}`).join('; ');
+  const icdText  = icdSelected.map(i => i.code).join('; ');
   const dateVal  = document.getElementById('exam-date').value;
   const pathName = document.getElementById('pathologist-name').value;
 
@@ -588,9 +630,9 @@ function buildPrintHtml(mode) {
   } else {
     // Направлення — верхня половина порожня, нижня — заключення
     body = `
-      <div style="height:calc(148mm - 18mm)"></div>
-      <hr class="separator">
-      <div style="padding-top:6mm">${content}</div>`;
+      <div style="min-height:130mm;display:block"></div>
+      <hr style="border:none;border-top:1px dashed #aaa;margin:4mm 0">
+      <div>${content}</div>`;
   }
 
   return `<!DOCTYPE html><html lang="uk"><head><meta charset="UTF-8">
