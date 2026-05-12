@@ -92,7 +92,7 @@
             </thead>
             <tbody id="cases-tbody">
               <tr>
-                <td colspan="9" class="text-center py-5 text-muted">
+                <td colspan="8" class="text-center py-5 text-muted">
                   <div class="spinner-border spinner-border-sm me-2"></div>Завантаження...
                 </td>
               </tr>
@@ -202,13 +202,12 @@
     document.body.classList.add('loaded');
     document.getElementById('new-date').value = new Date().toISOString().split('T')[0];
     if (profile.role === 'registrar') document.getElementById('btn-new-case').remove();
-    if (profile.role === 'admin') document.getElementById('th-org').classList.remove('d-none');
     await loadCases();
     bindEvents();
   }
 
   async function loadCases() {
-    document.getElementById('cases-tbody').innerHTML = `<tr><td colspan="9" class="text-center py-5 text-muted"><div class="spinner-border spinner-border-sm me-2"></div>Завантаження...</td></tr>`;
+    document.getElementById('cases-tbody').innerHTML = `<tr><td colspan="8" class="text-center py-5 text-muted"><div class="spinner-border spinner-border-sm me-2"></div>Завантаження...</td></tr>`;
     const { data, error } = await supabase
       .from('cases')
       .select(`id, case_number, case_date, patient_id, material_type, status, created_by,
@@ -244,7 +243,7 @@
     const tbody = document.getElementById('cases-tbody');
     const isAdmin = profile?.role === 'admin';
     if (!filtered.length) {
-      tbody.innerHTML = `<tr><td colspan="9" class="text-center py-5 text-muted">Заключень не знайдено</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="8" class="text-center py-5 text-muted">Заключень не знайдено</td></tr>`;
       document.getElementById('pagination-info').textContent = '';
       document.getElementById('pagination').innerHTML = '';
       return;
@@ -264,7 +263,6 @@
         <td class="text-truncate" style="max-width:200px" title="${diag}">${diagShort}</td>
         <td><span class="badge badge-outline text-${STA_COLOR[c.status] || 'secondary'}">${STA[c.status] || c.status}</span></td>
         <td class="text-muted">${c.profiles?.full_name || '—'}</td>
-        ${isAdmin ? `<td class="text-muted">${c.organizations?.name || '—'}</td>` : ''}
         <td class="text-muted">${MAT[c.material_type] || c.material_type}</td>
         <td>
           <div class="d-flex gap-1 justify-content-end">
