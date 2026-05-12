@@ -84,7 +84,6 @@
                 <th class="w-1"><input class="form-check-input m-0" type="checkbox" id="check-all"></th>
                 <th class="cursor-pointer" data-col="case_number">Номер</th>
                 <th class="cursor-pointer" data-col="case_date">Дата</th>
-                <th>ID пацієнта</th>
                 <th style="width:30%">Діагноз</th>
                 <th>Статус</th>
                 <th>Патолог</th>
@@ -94,7 +93,7 @@
             </thead>
             <tbody id="cases-tbody">
               <tr>
-                <td colspan="8" class="text-center py-5 text-muted">
+                <td colspan="7" class="text-center py-5 text-muted">
                   <div class="spinner-border spinner-border-sm me-2"></div>Завантаження...
                 </td>
               </tr>
@@ -216,7 +215,7 @@
   }
 
   async function loadCases() {
-    document.getElementById('cases-tbody').innerHTML = `<tr><td colspan="8" class="text-center py-5 text-muted"><div class="spinner-border spinner-border-sm me-2"></div>Завантаження...</td></tr>`;
+    document.getElementById('cases-tbody').innerHTML = `<tr><td colspan="7" class="text-center py-5 text-muted"><div class="spinner-border spinner-border-sm me-2"></div>Завантаження...</td></tr>`;
     const { data, error } = await supabase
       .from('cases')
       .select(`id, case_number, case_date, patient_id, material_type, status, created_by,
@@ -253,7 +252,7 @@
     const tbody = document.getElementById('cases-tbody');
     const isAdmin = profile?.role === 'admin';
     if (!filtered.length) {
-      tbody.innerHTML = `<tr><td colspan="8" class="text-center py-5 text-muted">Заключень не знайдено</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="7" class="text-center py-5 text-muted">Заключень не знайдено</td></tr>`;
       document.getElementById('pagination-info').textContent = '';
       document.getElementById('pagination').innerHTML = '';
       return;
@@ -269,7 +268,6 @@
         <td><input class="form-check-input row-check m-0" type="checkbox" data-id="${c.id}" ${checked}></td>
         <td><span class="mono text-primary">${c.case_number || '—'}</span></td>
         <td class="text-muted">${formatDate(c.case_date)}</td>
-        <td><span class="mono">${c.patient_id || '—'}</span></td>
         <td class="text-truncate" style="max-width:200px" title="${diag}">${diagShort}</td>
         <td><span class="badge badge-outline text-${STA_COLOR[c.status] || 'secondary'}">${STA[c.status] || c.status}</span></td>
         <td class="text-muted">${c.assigned_profile?.full_name || c.created_profile?.full_name || '—'}</td>
