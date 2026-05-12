@@ -141,13 +141,20 @@
         <div class="card mb-3">
           <div class="card-body">
             <div class="block-label">Блок 4. Кодування ICD-O-4</div>
+            <!-- Пошук -->
             <div class="input-group mb-2">
               <span class="input-group-text"><i class="ti ti-search"></i></span>
-              <input type="text" class="form-control" id="icd-search" placeholder="Пошук по коду або назві...">
-              <button class="btn btn-outline-secondary" id="btn-icd-clear"><i class="ti ti-x"></i></button>
+              <input type="text" class="form-control" id="icd-search" placeholder="Пошук по коду або назві (англ.)...">
+              <button class="btn btn-outline-secondary" id="btn-icd-clear" title="Очистити"><i class="ti ti-x"></i></button>
             </div>
-            <div id="icd-results" class="list-group mb-2" style="max-height:200px;overflow-y:auto;display:none"></div>
-            <div id="icd-selected" class="d-flex flex-wrap gap-2"></div>
+            <div id="icd-results" class="list-group mb-3" style="max-height:200px;overflow-y:auto;display:none"></div>
+            <!-- Вибрані коди -->
+            <div id="icd-selected" class="mb-3"></div>
+            <!-- Вільний текст -->
+            <div>
+              <label class="form-label small text-muted mb-1">Додатковий текст до кодування</label>
+              <textarea class="form-control form-control-sm" id="icd-free-text" rows="2" placeholder="Вільний текст..."></textarea>
+            </div>
           </div>
         </div>
 
@@ -273,8 +280,11 @@ function renderForm() {
     cassettes  = Array.isArray(reportData.cassettes) ? reportData.cassettes : [];
     if (reportData.block4_icd_code) {
       try { icdSelected = JSON.parse(reportData.block4_icd_code); }
-      catch { icdSelected = [{ code: reportData.block4_icd_code, description: '' }]; }
+      catch { icdSelected = [{ code: reportData.block4_icd_code, diagnosis_en: '' }]; }
       renderIcdSelected();
+    }
+    if (reportData.block4_snomed_code) {
+      document.getElementById('icd-free-text').value = reportData.block4_snomed_code;
     }
   }
 
@@ -338,14 +348,16 @@ document.getElementById('icd-search').addEventListener('input', async e => {
   if (!q) { results.style.display = 'none'; return; }
   icdTimer = setTimeout(async () => {
     const { data } = await supabase.from('icd_o4_codes')
-      .select('code, description')
-      .or(`code.ilike.%${q}%,description.ilike.%${q}%`)
+      .select('code, diagnosis_en')
+      .or(`code.ilike.%${q}%,diagnosis_en.ilike.%${q}%`)
       .limit(20);
     results.style.display = '';
     results.innerHTML = !data?.length
       ? '<div class="list-group-item text-muted">Нічого не знайдено</div>'
-      : data.map(r => `<button class="list-group-item list-group-item-action icd-item" data-code="${r.code}" data-desc="${r.description.replace(/"/g,'')}">
-          <span class="mono me-2">${r.code}</span>${r.description}
+      : data.map(r => `<button class="list-group-item list-group-item-action icd-item"
+          data-code="${r.code}" data-desc="${(r.diagnosis_en||'').replace(/"/g,'\"')}">
+          <span class="mono me-2 text-primary">${r.code}</span>
+          <span class="text-muted">${r.diagnosis_en || ''}</span>
         </button>`).join('');
     results.querySelectorAll('.icd-item').forEach(btn =>
       btn.addEventListener('click', () => selectIcd(btn.dataset.code, btn.dataset.desc)));
@@ -357,25 +369,32 @@ document.getElementById('btn-icd-clear').addEventListener('click', () => {
   document.getElementById('icd-results').style.display = 'none';
 });
 
-function selectIcd(code, description) {
-  if (!icdSelected.find(i => i.code === code)) {
-    icdSelected.push({ code, description });
-    renderIcdSelected();
+function selectIcd(code, diagEn) {
+  if (icdSelected.find(i => i.code === code)) {
+    document.getElementById('icd-search').value = '';
+    document.getElementById('icd-results').style.display = 'none';
+    return;
   }
+  icdSelected.push({ code, diagnosis_en: diagEn });
+  renderIcdSelected();
   document.getElementById('icd-search').value = '';
   document.getElementById('icd-results').style.display = 'none';
 }
 
 function renderIcdSelected() {
-  document.getElementById('icd-selected').innerHTML = icdSelected.map(i => `
-    <span class="badge bg-blue-lt d-flex align-items-center gap-1 p-2">
-      <span class="mono">${i.code}</span>
-      <span>${i.description}</span>
-      <button class="btn-close ms-1 icd-remove" data-code="${i.code}" style="font-size:10px"></button>
-    </span>`).join('');
-  document.querySelectorAll('.icd-remove').forEach(btn =>
+  const el = document.getElementById('icd-selected');
+  if (!icdSelected.length) { el.innerHTML = ''; return; }
+  el.innerHTML = icdSelected.map((i, idx) => `
+    <div class="d-flex align-items-center gap-2 mb-1 p-2 bg-light rounded">
+      <span class="mono text-primary fw-semibold" style="min-width:90px">ICD-O-4 code: ${i.code}</span>
+      <span class="text-muted small flex-fill">${i.diagnosis_en || ''}</span>
+      <button class="btn btn-sm btn-ghost-danger icd-remove" data-idx="${idx}">
+        <i class="ti ti-x"></i>
+      </button>
+    </div>`).join('');
+  el.querySelectorAll('.icd-remove').forEach(btn =>
     btn.addEventListener('click', () => {
-      icdSelected = icdSelected.filter(i => i.code !== btn.dataset.code);
+      icdSelected.splice(+btn.dataset.idx, 1);
       renderIcdSelected();
     }));
 }
@@ -441,6 +460,7 @@ function collectData() {
       block1_macro:      document.getElementById('block2').value,
       block3_diagnosis:  document.getElementById('block3').value,
       block4_icd_code:   icdSelected.length ? JSON.stringify(icdSelected) : null,
+      block4_snomed_code: document.getElementById('icd-free-text').value || null,
       block5_comment:    document.getElementById('block5').value || null,
       cassettes:         cassettes.length ? cassettes : null,
     }
@@ -509,15 +529,9 @@ function buildPrintHtml(mode) {
   } else {
     // Направлення — верхня половина порожня, нижня — заключення
     body = `
-      <table style="width:100%;height:calc(297mm - 36mm);border-collapse:collapse">
-        <tr style="height:50%"><td style="vertical-align:top;padding-bottom:6mm">
-          <!-- Верхня частина: направлення з лікарні -->
-        </td></tr>
-        <tr><td><hr class="separator"></td></tr>
-        <tr style="height:50%"><td style="vertical-align:top;padding-top:6mm">
-          ${content}
-        </td></tr>
-      </table>`;
+      <div style="height:calc(148mm - 18mm)"></div>
+      <hr class="separator">
+      <div style="padding-top:6mm">${content}</div>`;
   }
 
   return `<!DOCTYPE html><html lang="uk"><head><meta charset="UTF-8">
