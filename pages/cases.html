@@ -61,6 +61,8 @@
             <option value="biopsy">Біопсія діагностична</option>
             <option value="biopsy_urgent">Біопсія термінова</option>
             <option value="surgical">Операційний матеріал</option>
+            <option value="cytology">Цитологія</option>
+            <option value="other">Інше</option>
           </select>
         </div>
       </div>
@@ -147,6 +149,8 @@
               <option value="biopsy">Біопсія діагностична</option>
               <option value="biopsy_urgent">Біопсія термінова</option>
               <option value="surgical">Операційний матеріал</option>
+              <option value="cytology">Цитологія</option>
+              <option value="other">Інше</option>
             </select>
           </div>
           <div class="col-md-6">
@@ -180,7 +184,7 @@
   import { renderShell, toast } from '/MORPHEUS-PATH/js/shell.js';
   import { supabase } from '/MORPHEUS-PATH/js/supabase.js';
 
-  const MAT = { biopsy: 'Біопсія діагностична', biopsy_urgent: 'Біопсія термінова', surgical: 'Операційний матеріал' };
+  const MAT = { biopsy: 'Біопсія діагностична', biopsy_urgent: 'Біопсія термінова', surgical: 'Операційний матеріал', cytology: 'Цитологія', other: 'Інше' };
   const STA = { draft: 'Чернетка', in_progress: 'В роботі', signed: 'Підписано', archived: 'Архів' };
   const STA_COLOR = { draft: 'secondary', in_progress: 'warning', signed: 'success', archived: 'purple' };
   const PAGE_SIZE = 25;
@@ -375,6 +379,21 @@
     await supabase.from('reports').insert({ case_id: data.id });
     document.querySelector('#modal-new-case .btn-close').click();
     toast('Заключення створено');
+    // Додаємо новий запис локально
+    allCases.unshift({
+      id: data.id,
+      case_number: data.case_number,
+      case_date: data.case_date,
+      patient_id: data.patient_id,
+      material_type: data.material_type,
+      status: 'draft',
+      created_by: profile.id,
+      reports: { block3_diagnosis: null },
+      profiles: { full_name: profile.full_name },
+      organizations: profile.organizations,
+    });
+    applyFilters();
+    // Переходимо на форму заключення
     window.location.href = `/MORPHEUS-PATH/pages/report.html?id=${data.id}`;
   }
 
