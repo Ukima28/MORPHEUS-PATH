@@ -95,25 +95,21 @@ export async function renderShell(activePage) {
 }
 
 export function toast(message, type = 'success') {
-  const colors = { success: 'bg-success', error: 'bg-danger', info: 'bg-info' };
+  const colors = { success: '#2fb344', error: '#d63939', info: '#4299e1' };
   let container = document.getElementById('toast-container');
   if (!container) {
     container = document.createElement('div');
     container.id = 'toast-container';
-    container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
-    container.style.zIndex = '9999';
+    container.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px';
     document.body.appendChild(container);
   }
-  const id = 'toast-' + Date.now();
-  container.insertAdjacentHTML('beforeend', `
-    <div id="${id}" class="toast align-items-center text-white ${colors[type] || colors.success} border-0" role="alert">
-      <div class="d-flex">
-        <div class="toast-body fw-semibold">${message}</div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-      </div>
-    </div>`);
-  const el = document.getElementById(id);
-  const t = new window.bootstrap.Toast(el, { delay: 3500 });
-  t.show();
-  el.addEventListener('hidden.bs.toast', () => el.remove());
+  const el = document.createElement('div');
+  el.style.cssText = `background:${colors[type]||colors.success};color:white;padding:12px 18px;border-radius:6px;font-size:13px;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,.15);animation:fadeIn .2s ease;min-width:220px`;
+  el.textContent = message;
+  container.appendChild(el);
+  setTimeout(() => {
+    el.style.opacity = '0';
+    el.style.transition = 'opacity .3s';
+    setTimeout(() => el.remove(), 300);
+  }, 3200);
 }
