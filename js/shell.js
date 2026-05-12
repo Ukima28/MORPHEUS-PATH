@@ -113,7 +113,7 @@ export function toast(message, type = 'success') {
       </div>
     </div>`);
   const el = document.getElementById(id);
-  const t = new bootstrap.Toast(el, { delay: 3500 });
+  const t = new window.bootstrap.Toast(el, { delay: 3500 });
   t.show();
   el.addEventListener('hidden.bs.toast', () => el.remove());
 }
