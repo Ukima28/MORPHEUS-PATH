@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="/MORPHEUS-PATH/css/morpheus.css">
   <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/js/tabler.min.js"></script>
   <style>
-    body { opacity: 0; transition: opacity .2s ease; }
+    body { opacity: 0; transition: opacity .05s ease; }
     body.loaded { opacity: 1; }
   </style>
 </head>
@@ -265,6 +265,7 @@
         <td><span class="badge badge-outline text-${STA_COLOR[c.status] || 'secondary'}">${STA[c.status] || c.status}</span></td>
         <td class="text-muted">${c.profiles?.full_name || '—'}</td>
         ${isAdmin ? `<td class="text-muted">${c.organizations?.name || '—'}</td>` : ''}
+        <td class="text-muted">${MAT[c.material_type] || c.material_type}</td>
         <td>
           <div class="d-flex gap-1 justify-content-end">
             <a href="/MORPHEUS-PATH/pages/report.html?id=${c.id}" class="btn btn-sm">Відкрити</a>
@@ -348,7 +349,7 @@
     const base = body => `<!DOCTYPE html><html><head><meta charset="UTF-8">
       <style>@page{size:A4;margin:18mm 22mm}body{font-family:Arial,sans-serif;font-size:10pt;line-height:1.5}</style>
         <style>
-    body { opacity: 0; transition: opacity .2s ease; }
+    body { opacity: 0; transition: opacity .05s ease; }
     body.loaded { opacity: 1; }
   </style>
 </head><body>${body}</body></html>`;
