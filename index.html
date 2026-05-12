@@ -3,435 +3,89 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MORPHEUS PATH — Журнал заключень</title>
+  <title>MORPHEUS PATH — Вхід</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/css/tabler.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/dist/tabler-icons.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/MORPHEUS-PATH/css/morpheus.css">
-  <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/js/tabler.min.js"></script>
-  <style>
-    body { opacity: 0; transition: opacity .2s ease; }
-    body.loaded { opacity: 1; }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>body { font-family: 'Inter', sans-serif; }</style>
 </head>
-<body class="antialiased">
+<body class="d-flex flex-column loaded">
+<div class="page page-center">
+  <div class="container container-tight py-4">
 
-<div id="navbar-placeholder"></div>
+    <div class="text-center mb-4">
+      <h1 class="fw-bold mb-1" style="font-size:22px;letter-spacing:.04em">MORPHEUS PATHOLOGY</h1>
+      <p class="text-muted mt-1">Увійдіть для доступу до системи</p>
+    </div>
 
-<div class="page-wrapper">
-  <div class="page-header d-print-none">
-    <div class="container-fluid">
-      <div class="row g-2 align-items-center">
-        <div class="col">
-          <h2 class="page-title">Журнал заключень</h2>
-          <div class="text-muted mt-1">Патологоанатомічні заключення лабораторії</div>
+    <div class="card card-md">
+      <div class="card-body">
+
+        <div id="error-alert" class="alert alert-danger d-none mb-3" role="alert"></div>
+
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" id="email" class="form-control" placeholder="Введіть ваш email" autocomplete="email">
         </div>
-        <div class="col-auto ms-auto d-print-none">
-          <button class="btn btn-primary" id="btn-new-case" data-bs-toggle="modal" data-bs-target="#modal-new-case">
-            <i class="ti ti-plus"></i>
-            Нове заключення
+
+        <div class="mb-3">
+          <label class="form-label">Пароль</label>
+          <input type="password" id="password" class="form-control" placeholder="••••••••" autocomplete="current-password">
+        </div>
+
+        <div class="form-footer">
+          <button type="button" id="btn-login" class="btn btn-primary w-100">
+            <span class="btn-text">Увійти</span>
+            <span class="spinner-border spinner-border-sm d-none ms-2" id="spinner"></span>
           </button>
         </div>
+
       </div>
     </div>
-  </div>
 
-  <div class="page-body">
-    <div class="container-fluid">
-
-      <!-- Фільтри -->
-      <div class="row g-2 mb-3">
-        <div class="col">
-          <div class="input-group">
-            <span class="input-group-text">
-              <i class="ti ti-search"></i>
-            </span>
-            <input type="text" id="search-input" class="form-control" placeholder="Пошук по номеру, ID пацієнта, діагнозу...">
-          </div>
-        </div>
-        <div class="col-auto">
-          <select class="form-select" id="filter-status">
-            <option value="">Всі статуси</option>
-            <option value="draft">Чернетка</option>
-            <option value="in_progress">В роботі</option>
-            <option value="signed">Підписано</option>
-            <option value="archived">Архів</option>
-          </select>
-        </div>
-        <div class="col-auto">
-          <select class="form-select" id="filter-material">
-            <option value="">Всі типи</option>
-            <option value="biopsy">Біопсія діагностична</option>
-            <option value="biopsy_urgent">Біопсія термінова</option>
-            <option value="surgical">Операційний матеріал</option>
-            <option value="cytology">Цитологія</option>
-            <option value="other">Інше</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Таблиця -->
-      <div class="card">
-        <div class="card-header">
-          <h3 class="card-title">Всі заключення</h3>
-        </div>
-        <div class="table-responsive">
-          <table class="table table-vcenter table-mobile-md card-table table-hover table-clickable">
-            <thead>
-              <tr>
-                <th class="w-1"><input class="form-check-input m-0" type="checkbox" id="check-all"></th>
-                <th class="cursor-pointer" data-col="case_number">Номер</th>
-                <th class="cursor-pointer" data-col="case_date">Дата</th>
-                <th>ID пацієнта</th>
-                <th>Діагноз</th>
-                <th>Статус</th>
-                <th>Патолог</th>
-                <th id="th-org" class="d-none">Лікарня</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="cases-tbody">
-              <tr>
-                <td colspan="9" class="text-center py-5 text-muted">
-                  <div class="spinner-border spinner-border-sm me-2"></div>Завантаження...
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="card-footer d-flex align-items-center justify-content-between">
-          <p class="m-0 text-muted small" id="pagination-info"></p>
-          <ul class="pagination pagination-sm m-0" id="pagination"></ul>
-        </div>
-      </div>
-
-    </div>
   </div>
 </div>
 
-<!-- Floating bar -->
-<div class="floating-bar d-none" id="floating-bar">
-  <div class="card shadow">
-    <div class="card-body py-2 px-3 d-flex align-items-center gap-2">
-      <span class="text-muted small fw-semibold me-1">Обрано: <span id="selected-count">0</span></span>
-      <div class="vr"></div>
-      <button class="btn btn-sm" id="float-print-dir">
-        <i class="ti ti-printer"></i>Направлення
-      </button>
-      <button class="btn btn-sm" id="float-print-list">
-        <i class="ti ti-list"></i>Журнал
-      </button>
-      <button class="btn btn-sm btn-primary" id="float-edit">
-        <i class="ti ti-edit"></i>Редагувати
-      </button>
-      <button class="btn btn-sm btn-danger" id="float-delete">
-        <i class="ti ti-trash"></i>Видалити
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- Modal: Нове заключення -->
-<div class="modal modal-blur fade" id="modal-new-case" tabindex="-1">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Нове заключення</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <div id="modal-error" class="alert alert-danger d-none mb-3"></div>
-        <div class="row g-3">
-          <div class="col-md-6">
-            <label class="form-label required">Номер дослідження</label>
-            <input type="text" class="form-control" id="new-number" placeholder="напр. H-26-0001">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label required">Тип матеріалу</label>
-            <select class="form-select" id="new-material">
-              <option value="biopsy">Біопсія діагностична</option>
-              <option value="biopsy_urgent">Біопсія термінова</option>
-              <option value="surgical">Операційний матеріал</option>
-              <option value="cytology">Цитологія</option>
-              <option value="other">Інше</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Дата дослідження</label>
-            <input type="date" class="form-control" id="new-date">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">ID пацієнта</label>
-            <input type="text" class="form-control" id="new-patient-id" placeholder="напр. P-001">
-          </div>
-          <div class="col-12">
-            <label class="form-label">ПІБ пацієнта</label>
-            <input type="text" class="form-control" id="new-patient-name" placeholder="Прізвище Ім'я По-батькові">
-          </div>
-          <div class="col-12">
-            <label class="form-label">Клінічна інформація</label>
-            <textarea class="form-control" id="new-clinical" rows="3"></textarea>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn me-auto" data-bs-dismiss="modal">Скасувати</button>
-        <button type="button" class="btn btn-primary" id="btn-modal-save">Створити заключення</button>
-      </div>
-    </div>
-  </div>
-</div>
-
+<script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/js/tabler.min.js"></script>
 <script type="module">
-  import { requireAuth, getProfile } from '/MORPHEUS-PATH/js/auth.js';
-  import { renderShell, toast } from '/MORPHEUS-PATH/js/shell.js';
-  import { supabase } from '/MORPHEUS-PATH/js/supabase.js';
+  import { login, getSession, getProfile, redirectByRole } from '/MORPHEUS-PATH/js/auth.js';
 
-  const MAT = { biopsy: 'Біопсія діагностична', biopsy_urgent: 'Біопсія термінова', surgical: 'Операційний матеріал', cytology: 'Цитологія', other: 'Інше' };
-  const STA = { draft: 'Чернетка', in_progress: 'В роботі', signed: 'Підписано', archived: 'Архів' };
-  const STA_COLOR = { draft: 'secondary', in_progress: 'warning', signed: 'success', archived: 'purple' };
-  const PAGE_SIZE = 25;
-
-  let profile = null, allCases = [], filtered = [], selected = new Set();
-  let page = 1, sortCol = 'case_date', sortDir = 'desc', searchTimer = null;
-
-  async function init() {
-    await requireAuth();
-    profile = await renderShell('cases');
-    if (!profile) return;
-    document.body.classList.add('loaded');
-    document.getElementById('new-date').value = new Date().toISOString().split('T')[0];
-    if (profile.role === 'registrar') document.getElementById('btn-new-case').remove();
-    if (profile.role === 'admin') document.getElementById('th-org').classList.remove('d-none');
-    await loadCases();
-    bindEvents();
-  }
-
-  async function loadCases() {
-    document.getElementById('cases-tbody').innerHTML = `<tr><td colspan="9" class="text-center py-5 text-muted"><div class="spinner-border spinner-border-sm me-2"></div>Завантаження...</td></tr>`;
-    const { data, error } = await supabase
-      .from('cases')
-      .select(`id, case_number, case_date, patient_id, material_type, status, created_by,
-        reports(block3_diagnosis),
-        profiles!cases_assigned_pathologist_fkey(full_name),
-        organizations(name)`)
-      .order('created_at', { ascending: false });
-    if (error) { toast('Помилка завантаження', 'error'); return; }
-    allCases = data || [];
-    selected.clear();
-    updateFloatingBar();
-    applyFilters();
-  }
-
-  function applyFilters() {
-    const search   = document.getElementById('search-input').value.toLowerCase().trim();
-    const status   = document.getElementById('filter-status').value;
-    const material = document.getElementById('filter-material').value;
-    filtered = allCases.filter(c => {
-      const ms = !search || c.case_number?.toLowerCase().includes(search) || c.patient_id?.toLowerCase().includes(search) || c.reports?.block3_diagnosis?.toLowerCase().includes(search);
-      return ms && (!status || c.status === status) && (!material || c.material_type === material);
-    });
-    filtered.sort((a, b) => {
-      let av = a[sortCol] || '', bv = b[sortCol] || '';
-      if (sortCol === 'pathologist') { av = a.profiles?.full_name || ''; bv = b.profiles?.full_name || ''; }
-      return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
-    });
-    page = 1;
-    renderTable();
-  }
-
-  function renderTable() {
-    const tbody = document.getElementById('cases-tbody');
-    const isAdmin = profile?.role === 'admin';
-    if (!filtered.length) {
-      tbody.innerHTML = `<tr><td colspan="9" class="text-center py-5 text-muted">Заключень не знайдено</td></tr>`;
-      document.getElementById('pagination-info').textContent = '';
-      document.getElementById('pagination').innerHTML = '';
-      return;
+  (async () => {
+    const session = await getSession();
+    if (session) {
+      const profile = await getProfile();
+      if (profile) redirectByRole(profile.role);
     }
-    const start = (page - 1) * PAGE_SIZE;
-    const rows = filtered.slice(start, start + PAGE_SIZE);
-    tbody.innerHTML = rows.map(c => {
-      const checked  = selected.has(c.id) ? 'checked' : '';
-      const diag     = c.reports?.block3_diagnosis || '—';
-      const diagShort= diag.length > 50 ? diag.slice(0, 50) + '…' : diag;
-      const canDel   = profile?.role === 'admin' || (profile?.role === 'pathologist' && c.created_by === profile?.id);
-      return `<tr data-id="${c.id}" class="case-row">
-        <td><input class="form-check-input row-check m-0" type="checkbox" data-id="${c.id}" ${checked}></td>
-        <td><span class="mono text-primary">${c.case_number || '—'}</span></td>
-        <td class="text-muted">${formatDate(c.case_date)}</td>
-        <td><span class="mono">${c.patient_id || '—'}</span></td>
-        <td class="text-truncate" style="max-width:200px" title="${diag}">${diagShort}</td>
-        <td><span class="badge badge-outline text-${STA_COLOR[c.status] || 'secondary'}">${STA[c.status] || c.status}</span></td>
-        <td class="text-muted">${c.profiles?.full_name || '—'}</td>
-        ${isAdmin ? `<td class="text-muted">${c.organizations?.name || '—'}</td>` : ''}
-        <td>
-          <div class="d-flex gap-1 justify-content-end">
-            <a href="/MORPHEUS-PATH/pages/report.html?id=${c.id}" class="btn btn-sm">Відкрити</a>
-            ${canDel ? `<button class="btn btn-sm btn-ghost-danger btn-del" data-id="${c.id}">
-              <i class="ti ti-trash"></i>
-            </button>` : ''}
-          </div>
-        </td>
-      </tr>`;
-    }).join('');
-    renderPagination();
-    bindRowEvents();
-  }
+  })();
 
-  function renderPagination() {
-    const total = filtered.length, pages = Math.ceil(total / PAGE_SIZE);
-    const start = (page - 1) * PAGE_SIZE + 1, end = Math.min(page * PAGE_SIZE, total);
-    document.getElementById('pagination-info').textContent = `Показано ${start}–${end} з ${total}`;
-    const pg = document.getElementById('pagination');
-    if (pages <= 1) { pg.innerHTML = ''; return; }
-    let html = `<li class="page-item ${page===1?'disabled':''}"><a class="page-link" href="#" data-p="${page-1}">«</a></li>`;
-    for (let i = 1; i <= pages; i++) html += `<li class="page-item ${i===page?'active':''}"><a class="page-link" href="#" data-p="${i}">${i}</a></li>`;
-    html += `<li class="page-item ${page===pages?'disabled':''}"><a class="page-link" href="#" data-p="${page+1}">»</a></li>`;
-    pg.innerHTML = html;
-    pg.querySelectorAll('.page-link').forEach(a => a.addEventListener('click', e => {
-      e.preventDefault();
-      const p = parseInt(a.dataset.p);
-      if (p >= 1 && p <= pages) { page = p; renderTable(); }
-    }));
-  }
+  const emailEl = document.getElementById('email');
+  const passEl  = document.getElementById('password');
+  const btnEl   = document.getElementById('btn-login');
+  const spinner = document.getElementById('spinner');
+  const errEl   = document.getElementById('error-alert');
 
-  function bindRowEvents() {
-    document.querySelectorAll('.case-row').forEach(tr => {
-      tr.addEventListener('click', e => {
-        if (e.target.closest('.row-check, .btn-del, a')) return;
-        window.location.href = `/MORPHEUS-PATH/pages/report.html?id=${tr.dataset.id}`;
-      });
-    });
-    document.querySelectorAll('.row-check').forEach(cb => {
-      cb.addEventListener('change', () => {
-        if (cb.checked) selected.add(cb.dataset.id); else selected.delete(cb.dataset.id);
-        updateFloatingBar();
-      });
-    });
-    document.querySelectorAll('.btn-del').forEach(btn => {
-      btn.addEventListener('click', async e => {
-        e.stopPropagation();
-        if (!confirm('Видалити це заключення?')) return;
-        const { error } = await supabase.from('cases').delete().eq('id', btn.dataset.id);
-        if (error) { toast('Помилка видалення', 'error'); return; }
-        toast('Заключення видалено');
-        selected.delete(btn.dataset.id);
-        updateFloatingBar();
-        await loadCases();
-      });
-    });
-  }
+  function showError(msg) { errEl.textContent = msg; errEl.classList.remove('d-none'); }
+  function hideError()    { errEl.classList.add('d-none'); }
+  function setLoading(v)  { btnEl.disabled = v; spinner.classList.toggle('d-none', !v); }
 
-  function updateFloatingBar() {
-    const bar = document.getElementById('floating-bar');
-    document.getElementById('selected-count').textContent = selected.size;
-    bar.classList.toggle('d-none', selected.size === 0);
-    document.getElementById('float-edit').style.display = selected.size === 1 ? '' : 'none';
-    document.getElementById('float-delete').style.display = (profile?.role === 'admin' || profile?.role === 'pathologist') ? '' : 'none';
-  }
-
-  function printCases(mode) {
-    const data = allCases.filter(c => [...selected].includes(c.id));
-    if (!data.length) return;
-    const caseHtml = c => `
-      <div style="margin-bottom:8mm">
-        <div style="font-weight:700;font-size:11pt">№ ${c.case_number || '—'} від ${formatDate(c.case_date)}</div>
-        ${c.patient_id ? `<div>ID пацієнта: ${c.patient_id}</div>` : ''}
-        ${c.reports?.block3_diagnosis ? `<div style="margin-top:3mm"><strong>Діагноз:</strong> ${c.reports.block3_diagnosis}</div>` : ''}
-        <div style="margin-top:8mm;display:flex;justify-content:space-between">
-          <span>Патолог: ${c.profiles?.full_name || '—'}</span>
-          <span>Підпис: ___________________</span>
-          <span>Дата: ____________</span>
-        </div>
-      </div>`;
-    const base = body => `<!DOCTYPE html><html><head><meta charset="UTF-8">
-      <style>@page{size:A4;margin:18mm 22mm}body{font-family:Arial,sans-serif;font-size:10pt;line-height:1.5}</style>
-        <style>
-    body { opacity: 0; transition: opacity .2s ease; }
-    body.loaded { opacity: 1; }
-  </style>
-</head><body>${body}</body></html>`;
-    let content;
-    if (mode === 'direction') {
-      content = data.map(c => `<table style="width:100%;height:calc(297mm - 36mm);border-collapse:collapse;page-break-after:always">
-        <tr style="height:50%"><td></td></tr>
-        <tr style="height:50%;vertical-align:top"><td style="padding-top:6mm;border-top:1px solid #ccc">${caseHtml(c)}</td></tr>
-      </table>`).join('');
-    } else {
-      content = data.map(c => `<div style="page-break-inside:avoid;margin-bottom:10mm;padding-bottom:10mm;border-bottom:1px solid #ccc">${caseHtml(c)}</div>`).join('');
+  async function handleLogin() {
+    hideError();
+    const email    = emailEl.value.trim();
+    const password = passEl.value;
+    if (!email || !password) { showError('Введіть email та пароль'); return; }
+    setLoading(true);
+    try {
+      await login(email, password);
+      const profile = await getProfile();
+      redirectByRole(profile.role);
+    } catch {
+      showError('Невірний email або пароль');
+      setLoading(false);
     }
-    const w = window.open('');
-    w.document.write(base(content));
-    w.document.close();
-    w.print();
   }
 
-  async function createCase() {
-    const number   = document.getElementById('new-number').value.trim();
-    const material = document.getElementById('new-material').value;
-    const date     = document.getElementById('new-date').value;
-    const patId    = document.getElementById('new-patient-id').value.trim();
-    const patName  = document.getElementById('new-patient-name').value.trim();
-    const clinical = document.getElementById('new-clinical').value.trim();
-    const errEl    = document.getElementById('modal-error');
-    if (!number) { errEl.textContent = 'Введіть номер дослідження'; errEl.classList.remove('d-none'); return; }
-    errEl.classList.add('d-none');
-    const { data, error } = await supabase.from('cases').insert({
-      case_number: number, material_type: material,
-      case_date: date || new Date().toISOString().split('T')[0],
-      patient_id: patId || null, patient_name: patName || null,
-      clinical_info: clinical || null, status: 'draft',
-      created_by: profile.id, organization_id: profile.organization_id || null,
-    }).select().single();
-    if (error) { errEl.textContent = 'Помилка. Перевірте номер дослідження.'; errEl.classList.remove('d-none'); return; }
-    await supabase.from('reports').insert({ case_id: data.id });
-    document.querySelector('#modal-new-case .btn-close').click();
-    toast('Заключення створено');
-    await loadCases();
-    window.location.href = `/MORPHEUS-PATH/pages/report.html?id=${data.id}`;
-  }
-
-  function formatDate(d) {
-    if (!d) return '—';
-    const [y, m, day] = d.split('-');
-    return `${day}.${m}.${y}`;
-  }
-
-  function bindEvents() {
-    // modal opens via data-bs-toggle
-    document.getElementById('btn-modal-save').addEventListener('click', createCase);
-    document.getElementById('filter-status').addEventListener('change', applyFilters);
-    document.getElementById('filter-material').addEventListener('change', applyFilters);
-    document.getElementById('search-input').addEventListener('input', () => { clearTimeout(searchTimer); searchTimer = setTimeout(applyFilters, 300); });
-    document.getElementById('check-all').addEventListener('change', e => {
-      filtered.forEach(c => { if (e.target.checked) selected.add(c.id); else selected.delete(c.id); });
-      renderTable(); updateFloatingBar();
-    });
-    document.querySelectorAll('th[data-col]').forEach(th => th.addEventListener('click', () => {
-      const col = th.dataset.col;
-      if (sortCol === col) sortDir = sortDir === 'asc' ? 'desc' : 'asc'; else { sortCol = col; sortDir = 'asc'; }
-      applyFilters();
-    }));
-    document.getElementById('float-print-dir').addEventListener('click', () => printCases('direction'));
-    document.getElementById('float-print-list').addEventListener('click', () => printCases('list'));
-    document.getElementById('float-edit').addEventListener('click', () => {
-      const id = [...selected][0];
-      if (id) window.location.href = `/MORPHEUS-PATH/pages/report.html?id=${id}`;
-    });
-    document.getElementById('float-delete').addEventListener('click', async () => {
-      if (!selected.size || !confirm(`Видалити ${selected.size} заключень?`)) return;
-      const { error } = await supabase.from('cases').delete().in('id', [...selected]);
-      if (error) { toast('Помилка видалення', 'error'); return; }
-      const deletedIds = [...selected];
-      toast(`Видалено ${deletedIds.length} заключень`);
-      selected.clear();
-      updateFloatingBar();
-      await loadCases();
-    });
-  }
-
-  init();
+  btnEl.addEventListener('click', handleLogin);
+  passEl.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
 </script>
 </body>
 </html>
