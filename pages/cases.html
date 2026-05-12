@@ -311,13 +311,14 @@
     document.querySelectorAll('.btn-del').forEach(btn => {
       btn.addEventListener('click', async e => {
         e.stopPropagation();
-        if (!confirm('Видалити це заключення?')) return;
-        const { error } = await supabase.from('cases').delete().eq('id', btn.dataset.id);
-        if (error) { toast('Помилка видалення', 'error'); return; }
-        toast('Заключення видалено');
-        selected.delete(btn.dataset.id);
-        updateFloatingBar();
-        await loadCases();
+        showConfirm('Видалити це заключення?', async () => {
+          const { error } = await supabase.from('cases').delete().eq('id', btn.dataset.id);
+          if (error) { toast('Помилка видалення', 'error'); return; }
+          toast('Заключення видалено');
+          selected.delete(btn.dataset.id);
+          updateFloatingBar();
+          await loadCases();
+        });
       });
     });
   }
@@ -397,6 +398,38 @@
     return `${day}.${m}.${y}`;
   }
 
+
+  function showConfirm(text, onConfirm) {
+    document.getElementById('modal-confirm-text').textContent = text;
+    const modal = document.getElementById('modal-confirm-delete');
+    modal.classList.add('show');
+    modal.style.display = 'block';
+    document.body.classList.add('modal-open');
+
+    const backdrop = document.createElement('div');
+    backdrop.className = 'modal-backdrop fade show';
+    backdrop.id = 'confirm-backdrop';
+    document.body.appendChild(backdrop);
+
+    const btnConfirm = document.getElementById('btn-confirm-delete');
+    const btnCancel  = modal.querySelector('[data-bs-dismiss="modal"]');
+
+    function close() {
+      modal.classList.remove('show');
+      modal.style.display = 'none';
+      document.body.classList.remove('modal-open');
+      document.getElementById('confirm-backdrop')?.remove();
+      btnConfirm.replaceWith(btnConfirm.cloneNode(true));
+    }
+
+    document.getElementById('btn-confirm-delete').addEventListener('click', async () => {
+      close();
+      await onConfirm();
+    });
+
+    btnCancel.addEventListener('click', close);
+  }
+
   function bindEvents() {
     // modal opens via data-bs-toggle
     document.getElementById('btn-modal-save').addEventListener('click', createCase);
@@ -419,18 +452,36 @@
       if (id) window.location.href = `/MORPHEUS-PATH/pages/report.html?id=${id}`;
     });
     document.getElementById('float-delete').addEventListener('click', async () => {
-      if (!selected.size || !confirm(`Видалити ${selected.size} заключень?`)) return;
-      const { error } = await supabase.from('cases').delete().in('id', [...selected]);
-      if (error) { toast('Помилка видалення', 'error'); return; }
-      const deletedIds = [...selected];
-      toast(`Видалено ${deletedIds.length} заключень`);
-      selected.clear();
-      updateFloatingBar();
-      await loadCases();
+      if (!selected.size) return;
+      showConfirm(`Видалити ${selected.size} заключень?`, async () => {
+        const { error } = await supabase.from('cases').delete().in('id', [...selected]);
+        if (error) { toast('Помилка видалення', 'error'); return; }
+        const count = selected.size;
+        toast(`Видалено ${count} заключень`);
+        selected.clear();
+        updateFloatingBar();
+        await loadCases();
+      });
     });
   }
 
   init();
 </script>
+<!-- Modal: Підтвердження видалення -->
+<div class="modal modal-blur fade" id="modal-confirm-delete" tabindex="-1">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="modal-title">Підтвердження</div>
+        <div id="modal-confirm-text" class="text-muted mt-1">Видалити це заключення?</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn me-auto" data-bs-dismiss="modal">Скасувати</button>
+        <button type="button" class="btn btn-danger" id="btn-confirm-delete">Видалити</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
