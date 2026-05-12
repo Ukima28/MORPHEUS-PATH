@@ -47,6 +47,9 @@
               <i class="ti ti-search"></i>
             </span>
             <input type="text" id="search-input" class="form-control" placeholder="Пошук по номеру, ID пацієнта, діагнозу...">
+            <button class="btn btn-outline-secondary" type="button" id="btn-clear-search" title="Очистити">
+              <i class="ti ti-x"></i>
+            </button>
           </div>
         </div>
         <div class="col-auto">
@@ -83,11 +86,11 @@
                 <th class="cursor-pointer" data-col="case_number">Номер</th>
                 <th class="cursor-pointer" data-col="case_date">Дата</th>
                 <th>ID пацієнта</th>
-                <th>Діагноз</th>
+                <th style="width:30%">Діагноз</th>
                 <th>Статус</th>
                 <th>Патолог</th>
                 <th>Тип</th>
-                <th>Дії</th>
+                <th style="width:1%;white-space:nowrap">Дії</th>
               </tr>
             </thead>
             <tbody id="cases-tbody">
@@ -114,6 +117,10 @@
   <div class="card shadow">
     <div class="card-body py-2 px-3 d-flex align-items-center gap-2">
       <span class="text-muted small fw-semibold me-1">Обрано: <span id="selected-count">0</span></span>
+      <div class="vr"></div>
+      <button class="btn btn-sm btn-ghost-secondary" id="float-clear">
+        <i class="ti ti-x me-1"></i>Скинути вибір
+      </button>
       <div class="vr"></div>
       <button class="btn btn-sm" id="float-print-dir">
         <i class="ti ti-printer"></i>Направлення
@@ -433,6 +440,19 @@
   function bindEvents() {
     // modal opens via data-bs-toggle
     document.getElementById('btn-modal-save').addEventListener('click', createCase);
+    // Очистити пошук
+    document.getElementById('btn-clear-search').addEventListener('click', () => {
+      document.getElementById('search-input').value = '';
+      applyFilters();
+    });
+
+    // Скинути вибір
+    document.getElementById('float-clear').addEventListener('click', () => {
+      selected.clear();
+      updateFloatingBar();
+      renderTable();
+    });
+
     document.getElementById('filter-status').addEventListener('change', applyFilters);
     document.getElementById('filter-material').addEventListener('change', applyFilters);
     document.getElementById('search-input').addEventListener('input', () => { clearTimeout(searchTimer); searchTimer = setTimeout(applyFilters, 300); });
