@@ -10,6 +10,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/MORPHEUS-PATH/css/morpheus.css">
   <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/js/tabler.min.js"></script>
+  <style>
+    body { opacity: 0; transition: opacity .15s; }
+    body.loaded { opacity: 1; }
+  </style>
 </head>
 <body class="antialiased">
 
@@ -196,6 +200,7 @@
     await requireAuth();
     profile = await renderShell('cases');
     if (!profile) return;
+    document.body.classList.add('loaded');
     document.getElementById('new-date').value = new Date().toISOString().split('T')[0];
     if (profile.role === 'registrar') document.getElementById('btn-new-case').remove();
     if (profile.role === 'admin') document.getElementById('th-org').classList.remove('d-none');
@@ -343,7 +348,11 @@
       </div>`;
     const base = body => `<!DOCTYPE html><html><head><meta charset="UTF-8">
       <style>@page{size:A4;margin:18mm 22mm}body{font-family:Arial,sans-serif;font-size:10pt;line-height:1.5}</style>
-      </head><body>${body}</body></html>`;
+        <style>
+    body { opacity: 0; transition: opacity .15s; }
+    body.loaded { opacity: 1; }
+  </style>
+</head><body>${body}</body></html>`;
     let content;
     if (mode === 'direction') {
       content = data.map(c => `<table style="width:100%;height:calc(297mm - 36mm);border-collapse:collapse;page-break-after:always">
