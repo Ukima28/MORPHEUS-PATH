@@ -281,14 +281,36 @@ function renderForm() {
 
   renderCassettes();
 
-  // Права
-  const isReadOnly = profile.role === 'registrar' ||
-    (profile.role === 'laborant' && caseData.status !== 'draft');
+  // Права доступу
+  const isSigned    = caseData.status === 'signed';
+  const isOwner     = caseData.created_by === profile.id;
+  const isAdmin     = profile.role === 'admin';
+  const isPathologist = profile.role === 'pathologist';
+  const isLaborant  = profile.role === 'laborant';
+  const isRegistrar = profile.role === 'registrar';
+
+  // Readonly якщо: підписано | реєстратор | laborant не в draft | pathologist чужий запис
+  const isReadOnly =
+    isSigned ||
+    isRegistrar ||
+    (isLaborant && caseData.status !== 'draft') ||
+    (isPathologist && !isOwner);
+
   if (isReadOnly) {
     document.querySelectorAll('#report-form input, #report-form textarea, #report-form select').forEach(el => el.disabled = true);
     document.getElementById('btn-save').classList.add('d-none');
     document.getElementById('btn-sign').classList.add('d-none');
     document.getElementById('btn-add-cassette').classList.add('d-none');
+    document.getElementById('icd-search').disabled = true;
+    document.getElementById('btn-icd-clear').disabled = true;
+  }
+
+  // Якщо підписано — показуємо інфо банер
+  if (isSigned) {
+    const banner = document.createElement('div');
+    banner.className = 'alert alert-success d-flex align-items-center mb-3 no-print';
+    banner.innerHTML = '<i class="ti ti-circle-check me-2"></i><strong>Заключення підписано.</strong>&nbsp;Редагування заблоковано.';
+    document.getElementById('report-form').prepend(banner);
   }
 }
 
