@@ -264,7 +264,7 @@
       const checked  = selected.has(c.id) ? 'checked' : '';
       const diag     = c.reports?.block3_diagnosis || '—';
       const diagShort= diag.length > 50 ? diag.slice(0, 50) + '…' : diag;
-      const canDel   = c.status !== 'signed' && (profile?.role === 'admin' || (profile?.role === 'pathologist' && c.created_by === profile?.id));
+      const canDel   = profile?.role === 'admin' || (c.status !== 'signed' && profile?.role === 'pathologist' && c.created_by === profile?.id);
       return `<tr data-id="${c.id}" class="case-row">
         <td><input class="form-check-input row-check m-0" type="checkbox" data-id="${c.id}" ${checked}></td>
         <td><span class="mono text-primary">${c.case_number || '—'}</span></td>
