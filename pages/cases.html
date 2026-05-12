@@ -306,7 +306,10 @@
         const { error } = await supabase.from('cases').delete().eq('id', btn.dataset.id);
         if (error) { toast('Помилка видалення', 'error'); return; }
         toast('Заключення видалено');
-        await loadCases();
+        allCases = allCases.filter(c => c.id !== btn.dataset.id);
+        selected.delete(btn.dataset.id);
+        updateFloatingBar();
+        applyFilters();
       });
     });
   }
@@ -406,7 +409,12 @@
       if (!selected.size || !confirm(`Видалити ${selected.size} заключень?`)) return;
       const { error } = await supabase.from('cases').delete().in('id', [...selected]);
       if (error) { toast('Помилка видалення', 'error'); return; }
-      toast(`Видалено ${selected.size} заключень`); selected.clear(); updateFloatingBar(); await loadCases();
+      const deletedIds = [...selected];
+      toast(`Видалено ${deletedIds.length} заключень`);
+      allCases = allCases.filter(c => !deletedIds.includes(c.id));
+      selected.clear();
+      updateFloatingBar();
+      applyFilters();
     });
   }
 
