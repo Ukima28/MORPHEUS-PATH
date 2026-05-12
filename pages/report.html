@@ -141,20 +141,13 @@
         <div class="card mb-3">
           <div class="card-body">
             <div class="block-label">Блок 4. Кодування ICD-O-4</div>
-            <!-- Пошук -->
             <div class="input-group mb-2">
               <span class="input-group-text"><i class="ti ti-search"></i></span>
-              <input type="text" class="form-control" id="icd-search" placeholder="Пошук по коду або назві (англ.)...">
+              <input type="text" class="form-control" id="icd-search" placeholder="Пошук по коду або українській назві...">
               <button class="btn btn-outline-secondary" id="btn-icd-clear" title="Очистити"><i class="ti ti-x"></i></button>
             </div>
-            <div id="icd-results" class="list-group mb-3" style="max-height:200px;overflow-y:auto;display:none"></div>
-            <!-- Вибрані коди -->
-            <div id="icd-selected" class="mb-3"></div>
-            <!-- Вільний текст -->
-            <div>
-              <label class="form-label small text-muted mb-1">Додатковий текст до кодування</label>
-              <textarea class="form-control form-control-sm" id="icd-free-text" rows="2" placeholder="Вільний текст..."></textarea>
-            </div>
+            <div id="icd-results" class="list-group mb-2" style="max-height:220px;overflow-y:auto;display:none"></div>
+            <div id="icd-selected"></div>
           </div>
         </div>
 
@@ -280,12 +273,10 @@ function renderForm() {
     cassettes  = Array.isArray(reportData.cassettes) ? reportData.cassettes : [];
     if (reportData.block4_icd_code) {
       try { icdSelected = JSON.parse(reportData.block4_icd_code); }
-      catch { icdSelected = [{ code: reportData.block4_icd_code, diagnosis_en: '' }]; }
+      catch { icdSelected = [{ code: reportData.block4_icd_code, diagnosis_uk: '' }]; }
       renderIcdSelected();
     }
-    if (reportData.block4_snomed_code) {
-      document.getElementById('icd-free-text').value = reportData.block4_snomed_code;
-    }
+
   }
 
   renderCassettes();
@@ -348,19 +339,31 @@ document.getElementById('icd-search').addEventListener('input', async e => {
   if (!q) { results.style.display = 'none'; return; }
   icdTimer = setTimeout(async () => {
     const { data } = await supabase.from('icd_o4_codes')
-      .select('code, diagnosis_en')
-      .or(`code.ilike.%${q}%,diagnosis_en.ilike.%${q}%`)
+      .select('code, diagnosis_uk')
+      .or(`code.ilike.%${q}%,diagnosis_uk.ilike.%${q}%`)
       .limit(20);
     results.style.display = '';
-    results.innerHTML = !data?.length
-      ? '<div class="list-group-item text-muted">Нічого не знайдено</div>'
-      : data.map(r => `<button class="list-group-item list-group-item-action icd-item"
-          data-code="${r.code}" data-desc="${(r.diagnosis_en||'').replace(/"/g,'\"')}">
-          <span class="mono me-2 text-primary">${r.code}</span>
-          <span class="text-muted">${r.diagnosis_en || ''}</span>
-        </button>`).join('');
-    results.querySelectorAll('.icd-item').forEach(btn =>
-      btn.addEventListener('click', () => selectIcd(btn.dataset.code, btn.dataset.desc)));
+    // Додаємо опцію "ввести вручну" завжди першою
+    const manualItem = `<button class="list-group-item list-group-item-action icd-item icd-manual" data-code="manual">
+      <span class="text-muted fst-italic">— ввести вручну —</span>
+    </button>`;
+    const items = !data?.length ? '' : data.map(r => `
+      <button class="list-group-item list-group-item-action icd-item"
+        data-code="${r.code}" data-uk="${(r.diagnosis_uk||'').replace(/"/g,'')}">
+        <span class="mono me-2 text-primary">${r.code}</span>
+        <span class="text-muted small">${r.diagnosis_uk || ''}</span>
+      </button>`).join('');
+    results.innerHTML = manualItem + items;
+    results.querySelectorAll('.icd-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.dataset.code === 'manual') {
+          const manual = prompt('Введіть код вручну:');
+          if (manual?.trim()) selectIcd(manual.trim(), '');
+        } else {
+          selectIcd(btn.dataset.code, btn.dataset.uk);
+        }
+      });
+    });
   }, 300);
 });
 
@@ -369,13 +372,13 @@ document.getElementById('btn-icd-clear').addEventListener('click', () => {
   document.getElementById('icd-results').style.display = 'none';
 });
 
-function selectIcd(code, diagEn) {
+function selectIcd(code, diagUk) {
   if (icdSelected.find(i => i.code === code)) {
     document.getElementById('icd-search').value = '';
     document.getElementById('icd-results').style.display = 'none';
     return;
   }
-  icdSelected.push({ code, diagnosis_en: diagEn });
+  icdSelected.push({ code, diagnosis_uk: diagUk });
   renderIcdSelected();
   document.getElementById('icd-search').value = '';
   document.getElementById('icd-results').style.display = 'none';
@@ -386,10 +389,10 @@ function renderIcdSelected() {
   if (!icdSelected.length) { el.innerHTML = ''; return; }
   el.innerHTML = icdSelected.map((i, idx) => `
     <div class="d-flex align-items-center gap-2 mb-1 p-2 bg-light rounded">
-      <span class="mono text-primary fw-semibold" style="min-width:90px">ICD-O-4 code: ${i.code}</span>
-      <span class="text-muted small flex-fill">${i.diagnosis_en || ''}</span>
-      <button class="btn btn-sm btn-ghost-danger icd-remove" data-idx="${idx}">
-        <i class="ti ti-x"></i>
+      <span class="mono text-primary fw-semibold">${i.code}</span>
+      <span class="text-muted small flex-fill">${i.diagnosis_uk || ''}</span>
+      <button class="btn btn-sm btn-ghost-secondary icd-remove" data-idx="${idx}" title="Видалити">
+        <i class="ti ti-trash" style="color:#1a1a1a"></i>
       </button>
     </div>`).join('');
   el.querySelectorAll('.icd-remove').forEach(btn =>
@@ -460,7 +463,6 @@ function collectData() {
       block1_macro:      document.getElementById('block2').value,
       block3_diagnosis:  document.getElementById('block3').value,
       block4_icd_code:   icdSelected.length ? JSON.stringify(icdSelected) : null,
-      block4_snomed_code: document.getElementById('icd-free-text').value || null,
       block5_comment:    document.getElementById('block5').value || null,
       cassettes:         cassettes.length ? cassettes : null,
     }
