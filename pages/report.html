@@ -12,24 +12,11 @@
   <style>
     body { opacity: 0; transition: opacity .05s ease; }
     body.loaded { opacity: 1; }
-    .block-card { margin-bottom: 1rem; }
-    .block-label {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      color: var(--tblr-muted);
-      margin-bottom: .5rem;
-    }
-    .cassette-table td { padding: .35rem .5rem; vertical-align: middle; }
-    .cassette-table .btn-remove-row { color: var(--tblr-danger); background: none; border: none; cursor: pointer; padding: 2px 6px; }
-    .cassette-table .btn-remove-row:hover { opacity: .7; }
-    .sign-line { border-bottom: 1px solid #adb5bd; min-width: 200px; display: inline-block; }
-    @media print {
-      header.navbar, .no-print, .btn { display: none !important; }
-      .page-wrapper { margin: 0 !important; padding: 0 !important; }
-      .card { border: none !important; box-shadow: none !important; }
-    }
+    .block-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--tblr-muted); margin-bottom:.5rem; }
+    .cassette-table td { padding:.35rem .5rem; vertical-align:middle; }
+    .btn-remove-row { color:var(--tblr-danger); background:none; border:none; cursor:pointer; padding:2px 6px; opacity:.7; }
+    .btn-remove-row:hover { opacity:1; }
+    @media print { header.navbar, .no-print { display:none!important; } }
   </style>
 </head>
 <body class="antialiased">
@@ -37,12 +24,12 @@
 <div id="navbar-placeholder"></div>
 
 <div class="page-wrapper">
-  <div class="page-header d-print-none">
+  <div class="page-header d-print-none no-print">
     <div class="container-fluid">
       <div class="row g-2 align-items-center">
         <div class="col-auto">
           <a href="/MORPHEUS-PATH/pages/cases.html" class="btn btn-outline-secondary btn-sm">
-            <i class="ti ti-arrow-left me-1"></i>Журнал
+            <i class="ti ti-arrow-left me-1"></i>Закрити
           </a>
         </div>
         <div class="col">
@@ -52,9 +39,15 @@
           <button class="btn btn-outline-secondary btn-sm" id="btn-templates">
             <i class="ti ti-layout-list me-1"></i>Шаблони
           </button>
-          <button class="btn btn-outline-secondary btn-sm" id="btn-print">
-            <i class="ti ti-printer me-1"></i>Друк
-          </button>
+          <div class="dropdown">
+            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+              <i class="ti ti-printer me-1"></i>Друк
+            </button>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="#" id="btn-print-journal">📋 Журнал</a>
+              <a class="dropdown-item" href="#" id="btn-print-direction">📄 Направлення</a>
+            </div>
+          </div>
           <button class="btn btn-outline-primary btn-sm" id="btn-sign">
             <i class="ti ti-pen me-1"></i>Підписати
           </button>
@@ -75,7 +68,7 @@
       <div id="report-form" class="d-none">
 
         <!-- Шапка -->
-        <div class="card block-card">
+        <div class="card mb-3">
           <div class="card-body">
             <div class="row g-3">
               <div class="col-md-4">
@@ -94,14 +87,14 @@
               </div>
               <div class="col-md-4">
                 <div class="block-label">Статус</div>
-                <span id="status-badge" class="badge"></span>
+                <div class="mt-1"><span id="status-badge" class="badge"></span></div>
               </div>
             </div>
           </div>
         </div>
 
         <!-- Блок 1: Касети -->
-        <div class="card block-card">
+        <div class="card mb-3">
           <div class="card-header">
             <h3 class="card-title">Блок 1. Касети</h3>
             <div class="card-options">
@@ -114,75 +107,74 @@
             <table class="table table-vcenter cassette-table mb-0">
               <thead>
                 <tr>
-                  <th style="width:120px">Номер касети</th>
+                  <th style="width:140px">Номер касети</th>
                   <th>Опис</th>
                   <th style="width:40px"></th>
                 </tr>
               </thead>
               <tbody id="cassette-tbody">
+                <tr id="cassette-empty">
+                  <td colspan="3" class="text-center text-muted py-3">Касети відсутні. Натисніть «Додати касету»</td>
+                </tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- Блок 2: Макро і мікроскопічний описи -->
-        <div class="card block-card">
+        <!-- Блок 2 -->
+        <div class="card mb-3">
           <div class="card-body">
             <div class="block-label">Блок 2. Макро- і мікроскопічний описи</div>
             <textarea class="form-control" id="block2" rows="6" placeholder="Макроскопічний та мікроскопічний опис препарату..."></textarea>
           </div>
         </div>
 
-        <!-- Блок 3: Діагноз -->
-        <div class="card block-card">
+        <!-- Блок 3 -->
+        <div class="card mb-3">
           <div class="card-body">
             <div class="block-label">Блок 3. Патологоанатомічний діагноз</div>
             <textarea class="form-control" id="block3" rows="4" placeholder="Патологоанатомічний діагноз..."></textarea>
           </div>
         </div>
 
-        <!-- Блок 4: ICD-O-4 -->
-        <div class="card block-card">
+        <!-- Блок 4: ICD-O -->
+        <div class="card mb-3">
           <div class="card-body">
             <div class="block-label">Блок 4. Кодування ICD-O-4</div>
             <div class="input-group mb-2">
               <span class="input-group-text"><i class="ti ti-search"></i></span>
               <input type="text" class="form-control" id="icd-search" placeholder="Пошук по коду або назві...">
-              <button class="btn btn-outline-secondary" id="btn-icd-clear" title="Очистити пошук">
-                <i class="ti ti-x"></i>
-              </button>
+              <button class="btn btn-outline-secondary" id="btn-icd-clear"><i class="ti ti-x"></i></button>
             </div>
             <div id="icd-results" class="list-group mb-2" style="max-height:200px;overflow-y:auto;display:none"></div>
             <div id="icd-selected" class="d-flex flex-wrap gap-2"></div>
-            <input type="hidden" id="block4" value="">
           </div>
         </div>
 
-        <!-- Блок 5: Коментар -->
-        <div class="card block-card">
+        <!-- Блок 5 -->
+        <div class="card mb-3">
           <div class="card-body">
-            <div class="block-label">Блок 5. Коментар <span class="text-muted fw-normal">(опціонально)</span></div>
+            <div class="block-label">Блок 5. Коментар <span class="text-muted fw-normal text-lowercase">(опціонально)</span></div>
             <textarea class="form-control" id="block5" rows="3" placeholder="Додатковий коментар..."></textarea>
           </div>
         </div>
 
-        <!-- Блок 6: Підпис -->
-        <div class="card block-card">
+        <!-- Блок 6 -->
+        <div class="card mb-3">
           <div class="card-body">
+            <div class="block-label">Блок 6. Підпис</div>
             <div class="row g-3 align-items-end">
               <div class="col-md-4">
-                <div class="block-label">Блок 6. Дата дослідження</div>
+                <label class="form-label mb-1 small text-muted">Дата дослідження</label>
                 <input type="date" class="form-control" id="exam-date">
               </div>
               <div class="col-md-4">
-                <div class="block-label">Лікар-патологоанатом</div>
+                <label class="form-label mb-1 small text-muted">Лікар-патологоанатом</label>
                 <input type="text" class="form-control" id="pathologist-name" placeholder="ПІБ лікаря">
               </div>
               <div class="col-md-4">
-                <div class="block-label">Підпис</div>
-                <div class="d-flex align-items-center gap-2 pt-2">
-                  <span class="text-muted small">________________________</span>
-                </div>
+                <label class="form-label mb-1 small text-muted">Підпис</label>
+                <div class="form-control bg-transparent" style="border-bottom:2px solid #adb5bd;border-top:none;border-left:none;border-right:none;border-radius:0">&nbsp;</div>
               </div>
             </div>
           </div>
@@ -199,7 +191,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Текстові шаблони</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <button type="button" class="btn-close" id="tmpl-close"></button>
       </div>
       <div class="modal-body">
         <div class="input-group mb-3">
@@ -211,7 +203,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn me-auto" data-bs-dismiss="modal">Закрити</button>
+        <button type="button" class="btn" id="tmpl-close2">Закрити</button>
       </div>
     </div>
   </div>
@@ -222,51 +214,38 @@ import { requireAuth } from '/MORPHEUS-PATH/js/auth.js';
 import { renderShell, toast } from '/MORPHEUS-PATH/js/shell.js';
 import { supabase } from '/MORPHEUS-PATH/js/supabase.js';
 
-const STA = { draft: 'Чернетка', in_progress: 'В роботі', signed: 'Підписано', archived: 'Архів' };
-const STA_COLOR = { draft: 'secondary', in_progress: 'warning', signed: 'success', archived: 'purple' };
+const STA = { draft:'Чернетка', in_progress:'В роботі', signed:'Підписано', archived:'Архів' };
+const STA_COLOR = { draft:'secondary', in_progress:'warning', signed:'success', archived:'purple' };
+const MAT = { biopsy:'Біопсія діагностична', biopsy_urgent:'Біопсія термінова', surgical:'Операційний матеріал', cytology:'Цитологія', other:'Інше' };
 
-let profile = null;
-let caseData = null;
-let reportData = null;
-let cassettes = [];
-let icdSelected = [];
-let icdTimer = null;
-let templateTimer = null;
+const params  = new URLSearchParams(window.location.search);
+const caseId  = params.get('id');
 
-// Отримуємо ID з URL
-const params = new URLSearchParams(window.location.search);
-const caseId = params.get('id');
+let profile = null, caseData = null, reportData = null;
+let cassettes = [], icdSelected = [];
+let icdTimer = null, templateTimer = null;
 
+// ── INIT ──
 async function init() {
   await requireAuth();
   profile = await renderShell('cases');
   if (!profile) return;
-
-  if (!caseId) {
-    toast('ID заключення не вказано', 'error');
-    return;
-  }
-
+  if (!caseId) { toast('ID заключення не вказано', 'error'); return; }
   await loadCase();
+  bindEvents();
   document.body.classList.add('loaded');
 }
 
 async function loadCase() {
   const { data: c, error: ce } = await supabase
     .from('cases')
-    .select('*, profiles!cases_assigned_pathologist_fkey(full_name), organizations(name)')
-    .eq('id', caseId)
-    .single();
-
+    .select('*, profiles!cases_assigned_pathologist_fkey(full_name)')
+    .eq('id', caseId).single();
   if (ce || !c) { toast('Заключення не знайдено', 'error'); return; }
   caseData = c;
 
   const { data: r } = await supabase
-    .from('reports')
-    .select('*')
-    .eq('case_id', caseId)
-    .single();
-
+    .from('reports').select('*').eq('case_id', caseId).single();
   reportData = r;
 
   renderForm();
@@ -274,51 +253,41 @@ async function loadCase() {
   document.getElementById('report-form').classList.remove('d-none');
 }
 
+// ── RENDER ──
 function renderForm() {
   document.getElementById('page-title').textContent = `Заключення № ${caseData.case_number || '—'}`;
-  document.getElementById('case-number').value = caseData.case_number || '';
-  document.getElementById('material-type').value = caseData.material_type || 'biopsy';
+  document.getElementById('case-number').value    = caseData.case_number || '';
+  document.getElementById('material-type').value  = caseData.material_type || 'biopsy';
+  document.getElementById('exam-date').value       = caseData.case_date || new Date().toISOString().split('T')[0];
+  document.getElementById('pathologist-name').value = caseData.profiles?.full_name || profile.full_name || '';
 
   const badge = document.getElementById('status-badge');
   badge.textContent = STA[caseData.status] || caseData.status;
-  badge.className = `badge bg-${STA_COLOR[caseData.status] || 'secondary'}-lt`;
+  badge.className   = `badge bg-${STA_COLOR[caseData.status] || 'secondary'}-lt`;
 
   if (reportData) {
-    document.getElementById('block2').value = reportData.block2_macro || '';
+    document.getElementById('block2').value = reportData.block1_macro || '';
     document.getElementById('block3').value = reportData.block3_diagnosis || '';
     document.getElementById('block5').value = reportData.block5_comment || '';
-    document.getElementById('exam-date').value = reportData.exam_date || '';
-    document.getElementById('pathologist-name').value = reportData.pathologist_name || profile.full_name || '';
-    document.getElementById('block4').value = reportData.block4_icd || '';
 
-    // Касети
-    cassettes = reportData.cassettes || [];
-    renderCassettes();
-
-    // ICD вибрані
-    if (reportData.block4_icd) {
-      try {
-        icdSelected = JSON.parse(reportData.block4_icd);
-      } catch { icdSelected = []; }
+    cassettes  = Array.isArray(reportData.cassettes) ? reportData.cassettes : [];
+    if (reportData.block4_icd_code) {
+      try { icdSelected = JSON.parse(reportData.block4_icd_code); }
+      catch { icdSelected = [{ code: reportData.block4_icd_code, description: '' }]; }
       renderIcdSelected();
     }
-  } else {
-    document.getElementById('exam-date').value = new Date().toISOString().split('T')[0];
-    document.getElementById('pathologist-name').value = profile.full_name || '';
   }
 
-  // Права доступу
+  renderCassettes();
+
+  // Права
   const isReadOnly = profile.role === 'registrar' ||
     (profile.role === 'laborant' && caseData.status !== 'draft');
-
   if (isReadOnly) {
-    document.querySelectorAll('input, textarea, select, button').forEach(el => {
-      if (!['btn-print', 'btn-templates', 'icd-search', 'template-search'].includes(el.id)) {
-        el.disabled = true;
-      }
-    });
+    document.querySelectorAll('#report-form input, #report-form textarea, #report-form select').forEach(el => el.disabled = true);
     document.getElementById('btn-save').classList.add('d-none');
     document.getElementById('btn-sign').classList.add('d-none');
+    document.getElementById('btn-add-cassette').classList.add('d-none');
   }
 }
 
@@ -326,50 +295,60 @@ function renderForm() {
 function renderCassettes() {
   const tbody = document.getElementById('cassette-tbody');
   if (!cassettes.length) {
-    cassettes = [{ number: 'A1', description: '' }];
+    tbody.innerHTML = `<tr id="cassette-empty">
+      <td colspan="3" class="text-center text-muted py-3">Касети відсутні. Натисніть «Додати касету»</td>
+    </tr>`;
+    return;
   }
   tbody.innerHTML = cassettes.map((c, i) => `
     <tr>
-      <td><input type="text" class="form-control form-control-sm" value="${c.number || ''}"
-        onchange="updateCassette(${i}, 'number', this.value)" placeholder="A1"></td>
-      <td><input type="text" class="form-control form-control-sm" value="${c.description || ''}"
-        onchange="updateCassette(${i}, 'description', this.value)" placeholder="Опис касети..."></td>
-      <td><button class="btn-remove-row" onclick="removeCassette(${i})" title="Видалити рядок">
-        <i class="ti ti-x"></i></button></td>
+      <td><input type="text" class="form-control form-control-sm cassette-number" data-i="${i}" value="${c.number || ''}" placeholder="A1"></td>
+      <td><input type="text" class="form-control form-control-sm cassette-desc" data-i="${i}" value="${c.description || ''}" placeholder="Опис касети..."></td>
+      <td><button class="btn-remove-row btn-del-cassette" data-i="${i}" title="Видалити"><i class="ti ti-x"></i></button></td>
     </tr>`).join('');
-}
 
-window.updateCassette = (i, field, val) => { cassettes[i][field] = val; };
-window.removeCassette = (i) => { cassettes.splice(i, 1); renderCassettes(); };
+  // Обробники для касет
+  document.querySelectorAll('.cassette-number').forEach(el =>
+    el.addEventListener('input', e => { cassettes[+e.target.dataset.i].number = e.target.value; }));
+  document.querySelectorAll('.cassette-desc').forEach(el =>
+    el.addEventListener('input', e => { cassettes[+e.target.dataset.i].description = e.target.value; }));
+  document.querySelectorAll('.btn-del-cassette').forEach(el =>
+    el.addEventListener('click', e => {
+      cassettes.splice(+e.currentTarget.dataset.i, 1);
+      renderCassettes();
+    }));
+}
 
 document.getElementById('btn-add-cassette').addEventListener('click', () => {
   const last = cassettes[cassettes.length - 1];
-  const nextNum = last ? String.fromCharCode(last.number?.charCodeAt(0) + 1) + (last.number?.slice(1) || '') : 'A1';
+  let nextNum = 'A1';
+  if (last?.number) {
+    const match = last.number.match(/^([A-Za-z]+)(\d*)$/);
+    if (match) nextNum = String.fromCharCode(match[1].charCodeAt(0) + 1) + (match[2] || '1');
+  }
   cassettes.push({ number: nextNum, description: '' });
   renderCassettes();
 });
 
-// ── ICD-O-4 ПОШУК ──
+// ── ICD-O ──
 document.getElementById('icd-search').addEventListener('input', async e => {
   clearTimeout(icdTimer);
   const q = e.target.value.trim();
-  if (!q) { document.getElementById('icd-results').style.display = 'none'; return; }
+  const results = document.getElementById('icd-results');
+  if (!q) { results.style.display = 'none'; return; }
   icdTimer = setTimeout(async () => {
-    const { data } = await supabase
-      .from('icd_o4_codes')
+    const { data } = await supabase.from('icd_o4_codes')
       .select('code, description')
       .or(`code.ilike.%${q}%,description.ilike.%${q}%`)
       .limit(20);
-    const results = document.getElementById('icd-results');
-    if (!data?.length) {
-      results.innerHTML = '<div class="list-group-item text-muted">Нічого не знайдено</div>';
-    } else {
-      results.innerHTML = data.map(r => `
-        <button class="list-group-item list-group-item-action" onclick="selectIcd('${r.code}', '${r.description.replace(/'/g, "\\'")}')">
+    results.style.display = '';
+    results.innerHTML = !data?.length
+      ? '<div class="list-group-item text-muted">Нічого не знайдено</div>'
+      : data.map(r => `<button class="list-group-item list-group-item-action icd-item" data-code="${r.code}" data-desc="${r.description.replace(/"/g,'')}">
           <span class="mono me-2">${r.code}</span>${r.description}
         </button>`).join('');
-    }
-    results.style.display = '';
+    results.querySelectorAll('.icd-item').forEach(btn =>
+      btn.addEventListener('click', () => selectIcd(btn.dataset.code, btn.dataset.desc)));
   }, 300);
 });
 
@@ -378,50 +357,47 @@ document.getElementById('btn-icd-clear').addEventListener('click', () => {
   document.getElementById('icd-results').style.display = 'none';
 });
 
-window.selectIcd = (code, description) => {
+function selectIcd(code, description) {
   if (!icdSelected.find(i => i.code === code)) {
     icdSelected.push({ code, description });
     renderIcdSelected();
-    document.getElementById('block4').value = JSON.stringify(icdSelected);
   }
   document.getElementById('icd-search').value = '';
   document.getElementById('icd-results').style.display = 'none';
-};
-
-window.removeIcd = (code) => {
-  icdSelected = icdSelected.filter(i => i.code !== code);
-  renderIcdSelected();
-  document.getElementById('block4').value = JSON.stringify(icdSelected);
-};
+}
 
 function renderIcdSelected() {
   document.getElementById('icd-selected').innerHTML = icdSelected.map(i => `
     <span class="badge bg-blue-lt d-flex align-items-center gap-1 p-2">
       <span class="mono">${i.code}</span>
       <span>${i.description}</span>
-      <button onclick="removeIcd('${i.code}')" class="btn-close ms-1" style="font-size:10px"></button>
+      <button class="btn-close ms-1 icd-remove" data-code="${i.code}" style="font-size:10px"></button>
     </span>`).join('');
+  document.querySelectorAll('.icd-remove').forEach(btn =>
+    btn.addEventListener('click', () => {
+      icdSelected = icdSelected.filter(i => i.code !== btn.dataset.code);
+      renderIcdSelected();
+    }));
 }
 
 // ── ШАБЛОНИ ──
-document.getElementById('btn-templates').addEventListener('click', () => {
+function openTemplateModal() {
   document.getElementById('modal-templates').classList.add('show');
   document.getElementById('modal-templates').style.display = 'block';
   document.body.classList.add('modal-open');
-  const bd = document.createElement('div');
-  bd.className = 'modal-backdrop fade show';
-  bd.id = 'tmpl-backdrop';
-  document.body.appendChild(bd);
-});
-
-document.querySelector('#modal-templates .btn-close').addEventListener('click', closeTemplateModal);
-document.querySelector('#modal-templates .btn.me-auto').addEventListener('click', closeTemplateModal);
+  if (!document.getElementById('tmpl-bd')) {
+    const bd = document.createElement('div');
+    bd.className = 'modal-backdrop fade show';
+    bd.id = 'tmpl-bd';
+    document.body.appendChild(bd);
+  }
+}
 
 function closeTemplateModal() {
   document.getElementById('modal-templates').classList.remove('show');
   document.getElementById('modal-templates').style.display = 'none';
   document.body.classList.remove('modal-open');
-  document.getElementById('tmpl-backdrop')?.remove();
+  document.getElementById('tmpl-bd')?.remove();
   document.getElementById('template-search').value = '';
   document.getElementById('template-list').innerHTML = '<div class="text-center py-4 text-muted">Введіть текст для пошуку</div>';
 }
@@ -429,143 +405,163 @@ function closeTemplateModal() {
 document.getElementById('template-search').addEventListener('input', async e => {
   clearTimeout(templateTimer);
   const q = e.target.value.trim();
-  if (!q) {
-    document.getElementById('template-list').innerHTML = '<div class="text-center py-4 text-muted">Введіть текст для пошуку</div>';
-    return;
-  }
+  if (!q) { document.getElementById('template-list').innerHTML = '<div class="text-center py-4 text-muted">Введіть текст для пошуку</div>'; return; }
   templateTimer = setTimeout(async () => {
-    const { data } = await supabase
-      .from('text_templates')
-      .select('*')
-      .eq('is_active', true)
-      .or(`name.ilike.%${q}%,system_organ.ilike.%${q}%`)
-      .limit(20);
+    const { data } = await supabase.from('text_templates')
+      .select('*').eq('is_active', true)
+      .or(`name.ilike.%${q}%,system_organ.ilike.%${q}%`).limit(20);
     const list = document.getElementById('template-list');
-    if (!data?.length) {
-      list.innerHTML = '<div class="list-group-item text-muted">Шаблонів не знайдено</div>';
-    } else {
-      list.innerHTML = data.map(t => `
-        <button class="list-group-item list-group-item-action" onclick="applyTemplate(${JSON.stringify(t).replace(/"/g, '&quot;')})">
-          <div class="fw-semibold">${t.name}</div>
-          <div class="text-muted small">${t.system_organ}</div>
-        </button>`).join('');
-    }
+    if (!data?.length) { list.innerHTML = '<div class="list-group-item text-muted">Шаблонів не знайдено</div>'; return; }
+    list.innerHTML = data.map((t, idx) => `
+      <button class="list-group-item list-group-item-action tmpl-item" data-idx="${idx}">
+        <div class="fw-semibold">${t.name}</div>
+        <div class="text-muted small">${t.system_organ || ''}</div>
+      </button>`).join('');
+    list.querySelectorAll('.tmpl-item').forEach((btn, idx) =>
+      btn.addEventListener('click', () => {
+        const t = data[idx];
+        if (t.micro_description) document.getElementById('block2').value = t.micro_description;
+        if (t.diagnosis)         document.getElementById('block3').value = t.diagnosis;
+        if (t.icd_code) { icdSelected = [{ code: t.icd_code, description: '' }]; renderIcdSelected(); }
+        closeTemplateModal();
+        toast('Шаблон застосовано');
+      }));
   }, 300);
 });
 
-window.applyTemplate = (t) => {
-  if (t.micro_description) document.getElementById('block2').value = t.micro_description;
-  if (t.diagnosis)         document.getElementById('block3').value = t.diagnosis;
-  if (t.icd_code) {
-    icdSelected = [{ code: t.icd_code, description: '' }];
-    renderIcdSelected();
-    document.getElementById('block4').value = JSON.stringify(icdSelected);
-  }
-  closeTemplateModal();
-  toast('Шаблон застосовано');
-};
-
-// ── ЗБЕРЕЖЕННЯ ──
-async function collectData() {
-  // Збираємо значення касет з DOM
-  const rows = document.querySelectorAll('#cassette-tbody tr');
-  const cas = [];
-  rows.forEach(row => {
-    const inputs = row.querySelectorAll('input');
-    cas.push({ number: inputs[0]?.value || '', description: inputs[1]?.value || '' });
-  });
-  cassettes = cas;
-
+// ── ЗБІР ДАНИХ ──
+function collectData() {
   return {
-    case: {
+    caseUpdate: {
       case_number:   document.getElementById('case-number').value.trim(),
       material_type: document.getElementById('material-type').value,
+      case_date:     document.getElementById('exam-date').value || null,
     },
-    report: {
-      cassettes:        cassettes,
-      block2_macro:     document.getElementById('block2').value,
-      block3_diagnosis: document.getElementById('block3').value,
-      block4_icd:       document.getElementById('block4').value,
-      block5_comment:   document.getElementById('block5').value,
-      exam_date:        document.getElementById('exam-date').value,
-      pathologist_name: document.getElementById('pathologist-name').value,
+    reportUpdate: {
+      block1_macro:      document.getElementById('block2').value,
+      block3_diagnosis:  document.getElementById('block3').value,
+      block4_icd_code:   icdSelected.length ? JSON.stringify(icdSelected) : null,
+      block5_comment:    document.getElementById('block5').value || null,
+      cassettes:         cassettes.length ? cassettes : null,
     }
   };
 }
 
-document.getElementById('btn-save').addEventListener('click', async () => {
-  const d = await collectData();
-  const { error: ce } = await supabase.from('cases').update(d.case).eq('id', caseId);
-  if (ce) { toast('Помилка збереження', 'error'); return; }
+// ── ЗБЕРЕЖЕННЯ ──
+async function saveReport(extraCaseFields = {}) {
+  const { caseUpdate, reportUpdate } = collectData();
+
+  const { error: ce } = await supabase.from('cases')
+    .update({ ...caseUpdate, ...extraCaseFields }).eq('id', caseId);
+  if (ce) { toast('Помилка збереження заключення', 'error'); console.error(ce); return false; }
 
   if (reportData) {
-    const { error: re } = await supabase.from('reports').update(d.report).eq('case_id', caseId);
-    if (re) { toast('Помилка збереження', 'error'); return; }
+    const { error: re } = await supabase.from('reports')
+      .update(reportUpdate).eq('case_id', caseId);
+    if (re) { toast('Помилка збереження звіту', 'error'); console.error(re); return false; }
   } else {
-    const { error: re } = await supabase.from('reports').insert({ case_id: caseId, ...d.report });
-    if (re) { toast('Помилка збереження', 'error'); return; }
+    const { data: newR, error: re } = await supabase.from('reports')
+      .insert({ case_id: caseId, ...reportUpdate }).select().single();
+    if (re) { toast('Помилка створення звіту', 'error'); console.error(re); return false; }
+    reportData = newR;
   }
-
-  toast('Збережено');
-  caseData = { ...caseData, ...d.case };
-  document.getElementById('page-title').textContent = `Заключення № ${caseData.case_number || '—'}`;
-});
-
-// ── ПІДПИСАННЯ ──
-document.getElementById('btn-sign').addEventListener('click', async () => {
-  const d = await collectData();
-
-  // Спочатку зберігаємо
-  await supabase.from('cases').update({ ...d.case, status: 'signed' }).eq('id', caseId);
-  if (reportData) {
-    await supabase.from('reports').update(d.report).eq('case_id', caseId);
-  }
-
-  caseData.status = 'signed';
-  const badge = document.getElementById('status-badge');
-  badge.textContent = 'Підписано';
-  badge.className = 'badge bg-success-lt';
-  toast('Заключення підписано');
-});
+  return true;
+}
 
 // ── ДРУК ──
-document.getElementById('btn-print').addEventListener('click', async () => {
-  const d = await collectData();
-  const icdList = icdSelected.length ? icdSelected.map(i => `${i.code} ${i.description}`).join('; ') : '';
-  const casText = cassettes.map(c => `${c.number} — ${c.description}`).join('\n');
+function buildPrintHtml(mode) {
+  const { caseUpdate, reportUpdate } = collectData();
+  const matLabel = document.getElementById('material-type').options[document.getElementById('material-type').selectedIndex]?.text || '';
+  const casText  = cassettes.map(c => `${c.number} — ${c.description}`).join('\n');
+  const icdText  = icdSelected.map(i => `${i.code} ${i.description}`).join('; ');
+  const dateVal  = document.getElementById('exam-date').value;
+  const pathName = document.getElementById('pathologist-name').value;
 
-  const html = `<!DOCTYPE html><html lang="uk"><head><meta charset="UTF-8">
-    <style>
-      @page { size:A4; margin:18mm 22mm; }
-      body { font-family:Arial,sans-serif; font-size:10pt; color:#000; line-height:1.6; }
-      h2 { font-size:12pt; margin-bottom:4mm; }
-      .section { margin-bottom:6mm; }
-      .section-title { font-weight:bold; font-size:10pt; margin-bottom:2mm; border-bottom:1px solid #ccc; padding-bottom:1mm; }
-      .sign-area { margin-top:12mm; display:flex; justify-content:space-between; }
-      .sign-line { border-bottom:1px solid #000; min-width:180px; display:inline-block; }
-      pre { font-family:Arial,sans-serif; font-size:10pt; white-space:pre-wrap; margin:0; }
-    </style></head><body>
-    <h2>Патологоанатомічне заключення № ${caseData.case_number || '—'}</h2>
-    <div class="section">
-      <strong>Тип матеріалу:</strong> ${document.getElementById('material-type').options[document.getElementById('material-type').selectedIndex].text}
-    </div>
-    ${casText ? `<div class="section"><div class="section-title">Касети</div><pre>${casText}</pre></div>` : ''}
-    ${d.report.block2_macro ? `<div class="section"><div class="section-title">Макро- і мікроскопічний описи</div><pre>${d.report.block2_macro}</pre></div>` : ''}
-    ${d.report.block3_diagnosis ? `<div class="section"><div class="section-title">Патологоанатомічний діагноз</div><pre>${d.report.block3_diagnosis}</pre></div>` : ''}
-    ${icdList ? `<div class="section"><div class="section-title">Кодування ICD-O-4</div>${icdList}</div>` : ''}
-    ${d.report.block5_comment ? `<div class="section"><div class="section-title">Коментар</div><pre>${d.report.block5_comment}</pre></div>` : ''}
-    <div class="sign-area">
-      <span>Дата: <strong>${d.report.exam_date || '____________'}</strong></span>
-      <span>Патолог: <strong>${d.report.pathologist_name || '____________'}</strong></span>
+  const content = `
+    <div class="header"><strong>Патологоанатомічне заключення № ${caseUpdate.case_number || '—'}</strong></div>
+    <div><strong>Тип матеріалу:</strong> ${matLabel}</div>
+    ${casText ? `<div class="section"><strong>Касети:</strong><br><pre>${casText}</pre></div>` : ''}
+    ${reportUpdate.block1_macro ? `<div class="section"><strong>Макро- і мікроскопічний описи:</strong><br><pre>${reportUpdate.block1_macro}</pre></div>` : ''}
+    ${reportUpdate.block3_diagnosis ? `<div class="section"><strong>Патологоанатомічний діагноз:</strong><br><pre>${reportUpdate.block3_diagnosis}</pre></div>` : ''}
+    ${icdText ? `<div class="section"><strong>ICD-O-4:</strong> ${icdText}</div>` : ''}
+    ${reportUpdate.block5_comment ? `<div class="section"><strong>Коментар:</strong><br><pre>${reportUpdate.block5_comment}</pre></div>` : ''}
+    <div class="sign-row">
+      <span>Дата: <strong>${dateVal || '____________'}</strong></span>
+      <span>Патолог: <strong>${pathName || '____________'}</strong></span>
       <span>Підпис: <span class="sign-line"></span></span>
-    </div>
-    </body></html>`;
+    </div>`;
 
-  const w = window.open('');
-  w.document.write(html);
-  w.document.close();
-  w.print();
-});
+  const css = `
+    @page { size:A4; margin:18mm 22mm; }
+    body { font-family:Arial,sans-serif; font-size:10pt; color:#000; line-height:1.6; }
+    .header { font-size:11pt; font-weight:bold; margin-bottom:4mm; }
+    .section { margin-top:4mm; }
+    pre { font-family:Arial,sans-serif; font-size:10pt; white-space:pre-wrap; margin:1mm 0; }
+    .sign-row { margin-top:10mm; display:flex; justify-content:space-between; }
+    .sign-line { display:inline-block; border-bottom:1px solid #000; min-width:140px; }
+    .separator { border:none; border-top:1px dashed #aaa; margin:6mm 0; }`;
+
+  let body = '';
+  if (mode === 'journal') {
+    body = `<div style="page-break-inside:avoid">${content}</div>`;
+  } else {
+    // Направлення — верхня половина порожня, нижня — заключення
+    body = `
+      <table style="width:100%;height:calc(297mm - 36mm);border-collapse:collapse">
+        <tr style="height:50%"><td style="vertical-align:top;padding-bottom:6mm">
+          <!-- Верхня частина: направлення з лікарні -->
+        </td></tr>
+        <tr><td><hr class="separator"></td></tr>
+        <tr style="height:50%"><td style="vertical-align:top;padding-top:6mm">
+          ${content}
+        </td></tr>
+      </table>`;
+  }
+
+  return `<!DOCTYPE html><html lang="uk"><head><meta charset="UTF-8">
+    <style>${css}</style></head><body>${body}</body></html>`;
+}
+
+// ── BIND EVENTS ──
+function bindEvents() {
+  document.getElementById('btn-templates').addEventListener('click', openTemplateModal);
+  document.getElementById('tmpl-close').addEventListener('click', closeTemplateModal);
+  document.getElementById('tmpl-close2').addEventListener('click', closeTemplateModal);
+
+  document.getElementById('btn-save').addEventListener('click', async () => {
+    const ok = await saveReport();
+    if (ok) {
+      toast('Збережено');
+      caseData.case_number = document.getElementById('case-number').value.trim();
+      document.getElementById('page-title').textContent = `Заключення № ${caseData.case_number || '—'}`;
+    }
+  });
+
+  document.getElementById('btn-sign').addEventListener('click', async () => {
+    const ok = await saveReport({ status: 'signed' });
+    if (ok) {
+      caseData.status = 'signed';
+      const badge = document.getElementById('status-badge');
+      badge.textContent = 'Підписано';
+      badge.className   = 'badge bg-success-lt';
+      toast('Заключення підписано');
+    }
+  });
+
+  document.getElementById('btn-print-journal').addEventListener('click', e => {
+    e.preventDefault();
+    const w = window.open('');
+    w.document.write(buildPrintHtml('journal'));
+    w.document.close(); w.print();
+  });
+
+  document.getElementById('btn-print-direction').addEventListener('click', e => {
+    e.preventDefault();
+    const w = window.open('');
+    w.document.write(buildPrintHtml('direction'));
+    w.document.close(); w.print();
+  });
+}
 
 init();
 </script>
