@@ -24,9 +24,7 @@
         </div>
         <div class="col-auto ms-auto d-print-none">
           <button class="btn btn-primary" id="btn-new-case">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-              <!-- ti-plus -->
-            </svg>
+            <i class="ti ti-plus"></i>
             Нове заключення
           </button>
         </div>
@@ -42,9 +40,7 @@
         <div class="col">
           <div class="input-group">
             <span class="input-group-text">
-              <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-                <!-- ti-search -->
-              </svg>
+              <i class="ti ti-search"></i>
             </span>
             <input type="text" id="search-input" class="form-control" placeholder="Пошук по номеру, ID пацієнта, діагнозу...">
           </div>
@@ -114,24 +110,16 @@
       <span class="text-muted small fw-semibold me-1">Обрано: <span id="selected-count">0</span></span>
       <div class="vr"></div>
       <button class="btn btn-sm" id="float-print-dir">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-          <!-- ti-printer -->
-        </svg>Направлення
+        <i class="ti ti-printer"></i>Направлення
       </button>
       <button class="btn btn-sm" id="float-print-list">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-          <!-- ti-list -->
-        </svg>Журнал
+        <i class="ti ti-list"></i>Журнал
       </button>
       <button class="btn btn-sm btn-primary" id="float-edit">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-          <!-- ti-edit -->
-        </svg>Редагувати
+        <i class="ti ti-edit"></i>Редагувати
       </button>
       <button class="btn btn-sm btn-danger" id="float-delete">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-          <!-- ti-trash -->
-        </svg>Видалити
+        <i class="ti ti-trash"></i>Видалити
       </button>
     </div>
   </div>
@@ -271,9 +259,7 @@
           <div class="d-flex gap-1 justify-content-end">
             <a href="/MORPHEUS-PATH/pages/report.html?id=${c.id}" class="btn btn-sm">Відкрити</a>
             ${canDel ? `<button class="btn btn-sm btn-ghost-danger btn-del" data-id="${c.id}">
-              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-                <!-- ti-trash -->
-              </svg>
+              <i class="ti ti-trash"></i>
             </button>` : ''}
           </div>
         </td>
@@ -384,7 +370,7 @@
     }).select().single();
     if (error) { errEl.textContent = 'Помилка. Перевірте номер дослідження.'; errEl.classList.remove('d-none'); return; }
     await supabase.from('reports').insert({ case_id: data.id });
-    bootstrap.Modal.getInstance(document.getElementById('modal-new-case')).hide();
+    window.bootstrap.Modal.getInstance(document.getElementById('modal-new-case')).hide();
     toast('Заключення створено');
     window.location.href = `/MORPHEUS-PATH/pages/report.html?id=${data.id}`;
   }
@@ -396,7 +382,7 @@
   }
 
   function bindEvents() {
-    document.getElementById('btn-new-case')?.addEventListener('click', () => new bootstrap.Modal(document.getElementById('modal-new-case')).show());
+    document.getElementById('btn-new-case')?.addEventListener('click', () => new window.bootstrap.Modal(document.getElementById('modal-new-case')).show());
     document.getElementById('btn-modal-save').addEventListener('click', createCase);
     document.getElementById('filter-status').addEventListener('change', applyFilters);
     document.getElementById('filter-material').addEventListener('change', applyFilters);
