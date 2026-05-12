@@ -122,11 +122,11 @@
         <i class="ti ti-x me-1"></i>Скинути вибір
       </button>
       <div class="vr"></div>
-      <button class="btn btn-sm" id="float-print-dir">
-        <i class="ti ti-printer"></i>Направлення
-      </button>
       <button class="btn btn-sm" id="float-print-list">
-        <i class="ti ti-list"></i>Журнал
+        📋 Журнал
+      </button>
+      <button class="btn btn-sm" id="float-print-dir">
+        📄 Направлення
       </button>
       <button class="btn btn-sm btn-primary" id="float-edit">
         <i class="ti ti-edit"></i>Редагувати
@@ -306,6 +306,7 @@
     document.querySelectorAll('.case-row').forEach(tr => {
       tr.addEventListener('click', e => {
         if (e.target.closest('.row-check, .btn-del, a')) return;
+        if (selected.size >= 2) return;
         window.location.href = `/MORPHEUS-PATH/pages/report.html?id=${tr.dataset.id}`;
       });
     });
