@@ -97,11 +97,11 @@ export async function renderShell(activePage) {
     const link = e.target.closest('a[href]');
     if (!link) return;
     const href = link.getAttribute('href');
-    if (!href || href.startsWith('#') || href.startsWith('javascript') || link.getAttribute('data-bs-toggle')) return;
-    if (href.startsWith('/morpheos-path') || href.startsWith('http') === false) {
+    if (!href || href.startsWith('#') || href.startsWith('javascript:') || link.getAttribute('data-bs-toggle')) return;
+    if (href.startsWith('/morpheos-path')) {
       e.preventDefault();
       document.body.style.opacity = '0';
-      setTimeout(() => { window.location.href = href; }, 180);
+      setTimeout(() => { window.location.href = href; }, 50);
     }
   });
 
