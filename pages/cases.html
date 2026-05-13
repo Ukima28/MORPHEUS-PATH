@@ -335,14 +335,15 @@
     if (!data.length) return;
 
     const css = `
-      @page { size:A4; margin:18mm 22mm; }
-      body { font-family:Arial,sans-serif; font-size:10pt; color:#000; line-height:1.6; }
-      .header { font-size:11pt; font-weight:bold; margin-bottom:4mm; }
-      .section { margin-top:4mm; }
-      pre { font-family:Arial,sans-serif; font-size:10pt; white-space:pre-wrap; margin:1mm 0; }
-      .sign-row { margin-top:10mm; display:flex; justify-content:space-between; }
-      .sign-line { display:inline-block; border-bottom:1px solid #000; min-width:140px; }
-      .separator { border:none; border-top:1px dashed #aaa; margin:6mm 0; }`;
+      @page { size:A4; margin:15mm 20mm; }
+      body { font-family:Arial,sans-serif; font-size:7.5pt; color:#000; line-height:1.4; margin:0; }
+      .report-block { page-break-inside:avoid; break-inside:avoid; }
+      .header { font-size:8.5pt; font-weight:bold; margin-bottom:2mm; }
+      .section { margin-top:3mm; }
+      pre { font-family:Arial,sans-serif; font-size:7.5pt; white-space:pre-wrap; margin:1mm 0; }
+      .sign-row { margin-top:8mm; display:flex; justify-content:space-between; font-size:7pt; }
+      .sign-line { display:inline-block; border-bottom:1px solid #000; min-width:120px; }
+      .separator { border:none; border-top:1px dashed #aaa; margin:4mm 0; }`;
 
     const caseHtml = c => {
       const diag = c.reports?.block3_diagnosis;
@@ -367,15 +368,15 @@
 
     let body = '';
     if (mode === 'direction') {
-      body = data.map(c => `
-        <table style="width:100%;height:calc(297mm - 36mm);border-collapse:collapse;page-break-after:always">
-          <tr style="height:50%"><td></td></tr>
-          <tr><td><hr class="separator"></td></tr>
-          <tr style="height:50%;vertical-align:top"><td style="padding-top:6mm">${caseHtml(c)}</td></tr>
-        </table>`).join('');
+      body = data.map((c, idx) => `
+        <div style="${idx > 0 ? 'page-break-before:always;' : ''}">
+          <div style="min-height:130mm;display:block"></div>
+          <hr class="separator">
+          <div class="report-block">${caseHtml(c)}</div>
+        </div>`).join('');
     } else {
       body = data.map(c => `
-        <div style="page-break-inside:avoid;margin-bottom:10mm;padding-bottom:10mm;border-bottom:1px solid #ccc">
+        <div class="report-block" style="margin-bottom:8mm;padding-bottom:8mm;border-bottom:1px solid #eee">
           ${caseHtml(c)}
         </div>`).join('');
     }
