@@ -222,6 +222,7 @@ const params  = new URLSearchParams(window.location.search);
 const caseId  = params.get('id');
 
 let profile = null, caseData = null, reportData = null;
+let _isReadOnly = false;
 let cassettes = [], icdSelected = [];
 let icdTimer = null, templateTimer = null;
 
@@ -296,6 +297,7 @@ function renderForm() {
     (isLaborant && caseData.status !== 'draft') ||
     (isPathologist && !isOwner);
 
+  _isReadOnly = isReadOnly;
   if (isReadOnly) {
     document.querySelectorAll('#report-form input, #report-form textarea, #report-form select').forEach(el => el.disabled = true);
     document.getElementById('btn-save').classList.add('d-none');
@@ -325,12 +327,12 @@ function renderCassettes() {
   }
   emptyMsg.style.display = 'none';
   container.innerHTML = cassettes.map((c, i) => `
-    <div class="d-flex gap-2 align-items-stretch mb-2">
+    <div class="d-flex gap-2 align-items-center mb-2">
       <input type="text" class="form-control cassette-number" data-i="${i}"
         value="${c.number || ''}" placeholder="A1"
-        style="width:7ch;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:13px;min-height:72px">
-      <textarea class="form-control cassette-desc" data-i="${i}" rows="2"
-        style="flex:1;resize:vertical;font-size:13px;line-height:1.6;min-height:72px"
+        style="width:10ch;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:13px">
+      <textarea class="form-control cassette-desc" data-i="${i}" rows="1"
+        style="flex:1;resize:none;font-size:13px;line-height:1.6"
         placeholder="Опис касети...">${c.description || ''}</textarea>
       <button class="btn-icon-delete btn-del-cassette" data-i="${i}" title="Видалити"
         style="flex-shrink:0;margin-top:4px">
@@ -419,9 +421,9 @@ function renderIcdSelected() {
     <div class="d-flex align-items-center gap-2 mb-1 p-2 bg-light rounded">
       <span class="mono text-primary fw-semibold">${i.code}</span>
       <span class="text-muted small flex-fill">${i.diagnosis_uk || ''}</span>
-      <button class="btn-icon-delete icd-remove" data-idx="${idx}" title="Видалити">
+      ${!_isReadOnly ? `<button class="btn-icon-delete icd-remove" data-idx="${idx}" title="Видалити">
         <i class="ti ti-trash"></i>
-      </button>
+      </button>` : ''}
     </div>`).join('');
   el.querySelectorAll('.icd-remove').forEach(btn =>
     btn.addEventListener('click', () => {
@@ -616,11 +618,11 @@ function buildPrintHtml(mode) {
 
   const css = `
     @page { size:A4; margin:15mm 20mm; }
-    body { font-family:Arial,sans-serif; font-size:8.5pt; color:#000; line-height:1.5; margin:0; }
+    body { font-family:Arial,sans-serif; font-size:7.5pt; color:#000; line-height:1.4; margin:0; }
     .report-block { page-break-inside:avoid; break-inside:avoid; }
-    .header { font-size:9.5pt; font-weight:bold; margin-bottom:3mm; }
+    .header { font-size:8.5pt; font-weight:bold; margin-bottom:2mm; }
     .section { margin-top:3mm; }
-    pre { font-family:Arial,sans-serif; font-size:8.5pt; white-space:pre-wrap; margin:1mm 0; }
+    pre { font-family:Arial,sans-serif; font-size:7.5pt; white-space:pre-wrap; margin:1mm 0; }
     .sign-row { margin-top:8mm; display:flex; justify-content:space-between; font-size:8pt; }
     .sign-line { display:inline-block; border-bottom:1px solid #000; min-width:120px; }
     .separator { border:none; border-top:1px dashed #aaa; margin:4mm 0; }`;
