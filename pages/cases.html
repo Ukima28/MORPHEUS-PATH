@@ -71,10 +71,7 @@
           </select>
         </div>
         <div class="col-auto">
-          <input type="date" class="form-control" id="filter-date-from" title="Дата від">
-        </div>
-        <div class="col-auto">
-          <input type="date" class="form-control" id="filter-date-to" title="Дата до">
+          <input type="date" class="form-control" id="filter-date" title="Фільтр по даті">
         </div>
       </div>
 
@@ -241,13 +238,11 @@
     const search   = document.getElementById('search-input').value.toLowerCase().trim();
     const status   = document.getElementById('filter-status').value;
     const material = document.getElementById('filter-material').value;
-    const dateFrom = document.getElementById('filter-date-from').value;
-    const dateTo   = document.getElementById('filter-date-to').value;
+    const dateFilter = document.getElementById('filter-date').value;
     filtered = allCases.filter(c => {
       const ms = !search || c.case_number?.toLowerCase().includes(search) || c.patient_id?.toLowerCase().includes(search) || c.reports?.block3_diagnosis?.toLowerCase().includes(search);
-      const df = !dateFrom || (c.case_date && c.case_date >= dateFrom);
-      const dt = !dateTo   || (c.case_date && c.case_date <= dateTo);
-      return ms && (!status || c.status === status) && (!material || c.material_type === material) && df && dt;
+      const df = !dateFilter || c.case_date === dateFilter;
+      return ms && (!status || c.status === status) && (!material || c.material_type === material) && df;
     });
     filtered.sort((a, b) => {
       let av = a[sortCol] || '', bv = b[sortCol] || '';
@@ -479,8 +474,7 @@
 
     document.getElementById('filter-status').addEventListener('change', applyFilters);
     document.getElementById('filter-material').addEventListener('change', applyFilters);
-    document.getElementById('filter-date-from').addEventListener('change', applyFilters);
-    document.getElementById('filter-date-to').addEventListener('change', applyFilters);
+    document.getElementById('filter-date').addEventListener('change', applyFilters);
     document.getElementById('search-input').addEventListener('input', () => { clearTimeout(searchTimer); searchTimer = setTimeout(applyFilters, 300); });
     document.getElementById('check-all').addEventListener('change', e => {
       filtered.forEach(c => { if (e.target.checked) selected.add(c.id); else selected.delete(c.id); });
