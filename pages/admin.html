@@ -3,16 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MORPHEUS PATH — Адмін панель</title>
+  <title>MORPHEOS PATH — Адмін панель</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/css/tabler.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/MORPHEUS-PATH/css/morpheus.css">
+  <link rel="stylesheet" href="/morpheos-path/css/morpheus.css">
+  <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/js/tabler.min.js"></script>
+  <style>
+    body { opacity: 0; transition: opacity .05s ease; }
+    body.loaded { opacity: 1; }
+  </style>
 </head>
 <body class="antialiased">
 <div id="navbar-placeholder"></div>
 <div class="page-wrapper">
   <div class="page-header d-print-none">
-    <div class="container-xl">
+    <div class="container-fluid">
       <div class="row g-2 align-items-center">
         <div class="col">
           <h2 class="page-title">Адмін панель</h2>
@@ -21,7 +27,7 @@
     </div>
   </div>
   <div class="page-body">
-    <div class="container-xl">
+    <div class="container-fluid">
       <div class="card">
         <div class="card-body text-center py-5 text-muted">
           Розділ в розробці
@@ -30,13 +36,13 @@
     </div>
   </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/js/tabler.min.js"></script>
 <script type="module">
-  import { requireAuth } from '/MORPHEUS-PATH/js/auth.js';
-  import { renderShell } from '/MORPHEUS-PATH/js/shell.js';
+  import { requireAuth } from '/morpheos-path/js/auth.js';
+  import { renderShell } from '/morpheos-path/js/shell.js';
   async function init() {
     await requireAuth();
     await renderShell('admin');
+    document.body.classList.add('loaded');
   }
   init();
 </script>
