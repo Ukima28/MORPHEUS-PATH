@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/css/tabler.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/MORPHEUS-PATH/css/morpheus.css">
+  <link rel="stylesheet" href="/morpheos-path/css/morpheus.css">
   <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/js/tabler.min.js"></script>
   <style>
     body { opacity: 0; transition: opacity .05s ease; }
@@ -191,9 +191,9 @@
 </div>
 
 <script type="module">
-  import { requireAuth, getProfile } from '/MORPHEUS-PATH/js/auth.js';
-  import { renderShell, toast } from '/MORPHEUS-PATH/js/shell.js';
-  import { supabase } from '/MORPHEUS-PATH/js/supabase.js';
+  import { requireAuth, getProfile } from '/morpheos-path/js/auth.js';
+  import { renderShell, toast } from '/morpheos-path/js/shell.js';
+  import { supabase } from '/morpheos-path/js/supabase.js';
 
   const MAT = { biopsy: 'Біопсія діагностична', biopsy_urgent: 'Біопсія термінова', surgical: 'Операційний матеріал', cytology: 'Цитологія', other: 'Інше' };
   const STA = { draft: 'Чернетка', in_progress: 'В роботі', signed: 'Підписано', archived: 'Архів' };
@@ -273,7 +273,7 @@
         <td class="text-muted">${c.assigned_profile?.full_name || c.created_profile?.full_name || '—'}</td>
         <td class="text-muted">${MAT[c.material_type] || c.material_type}</td>
         <td style="white-space:nowrap">
-          <a href="/MORPHEUS-PATH/pages/report.html?id=${c.id}" class="btn btn-sm">Відкрити</a>
+          <a href="/morpheos-path/pages/report.html?id=${c.id}" class="btn btn-sm">Відкрити</a>
           ${canDel ? `<button class="btn btn-sm btn-ghost-danger btn-del ms-1" data-id="${c.id}" title="Видалити"><i class="ti ti-trash"></i></button>` : ''}
         </td>
       </tr>`;
@@ -408,7 +408,7 @@
     document.querySelector('#modal-new-case .btn-close').click();
     toast('Заключення створено');
     await loadCases();
-    window.location.href = `/MORPHEUS-PATH/pages/report.html?id=${data.id}`;
+    window.location.href = `/morpheos-path/pages/report.html?id=${data.id}`;
   }
 
   function formatDate(d) {
@@ -482,7 +482,7 @@
     document.getElementById('float-print-list').addEventListener('click', e => { e.preventDefault(); printCases('list'); });
     document.getElementById('float-edit').addEventListener('click', () => {
       const id = [...selected][0];
-      if (id) window.location.href = `/MORPHEUS-PATH/pages/report.html?id=${id}`;
+      if (id) window.location.href = `/morpheos-path/pages/report.html?id=${id}`;
     });
     document.getElementById('float-delete').addEventListener('click', async () => {
       if (!selected.size) return;
