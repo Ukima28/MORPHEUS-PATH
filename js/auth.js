@@ -1,6 +1,6 @@
-import { supabase } from '/MORPHEOS-PATH/js/supabase.js';
+import { supabase } from '/morpheos-path/js/supabase.js';
 
-const BASE = '/MORPHEOS-PATH';
+const BASE = '/morpheos-path';
 let _profile = null;
 
 export async function login(email, password) {
