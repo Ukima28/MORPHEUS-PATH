@@ -10,8 +10,25 @@
   <link rel="stylesheet" href="/morpheos-path/css/morpheus.css">
   <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/js/tabler.min.js"></script>
   <style>
-    body { opacity: 0; transition: opacity .05s ease; }
-    body.loaded { opacity: 1; }
+    body{opacity:0;transition:opacity .05s ease}body.loaded{opacity:1}
+    .cap-section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tblr-primary);border-bottom:2px solid var(--tblr-primary);padding-bottom:5px;margin-bottom:1rem}
+    .cap-field{margin-bottom:1.25rem}
+    .cap-field-label{font-size:13px;font-weight:600;color:#1e293b;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+    .badge-req{font-size:10px;background:#fef2f2;color:#dc2626;border-radius:4px;padding:1px 5px;font-weight:700}
+    .badge-opt{font-size:10px;background:#f1f5f9;color:#64748b;border-radius:4px;padding:1px 5px}
+    .cap-note{font-size:11px;color:#64748b;margin-bottom:7px;font-style:italic}
+    .cap-options{display:flex;flex-direction:column;gap:3px}
+    .cap-option{display:flex;align-items:flex-start;gap:8px;padding:5px 10px;border-radius:6px;cursor:pointer;transition:background .1s}
+    .cap-option:hover{background:#f8fafc}
+    .cap-option.selected{background:#eff6ff}
+    .cap-option input{margin-top:2px;flex-shrink:0}
+    .cap-option label{font-size:13px;cursor:pointer;line-height:1.4}
+    .cap-opt-text{margin-top:4px;margin-left:24px}
+    .cap-child{margin-left:24px;margin-top:6px;display:none}
+    .cap-child.visible{display:block}
+    .synoptic-preview{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px;font-size:11.5px;line-height:1.7;white-space:pre-wrap;font-family:'JetBrains Mono',monospace;max-height:500px;overflow-y:auto}
+    .protocol-card{cursor:pointer;transition:border .15s;border:2px solid transparent}
+    .protocol-card:hover{border-color:var(--tblr-primary)}
   </style>
 </head>
 <body class="antialiased">
@@ -22,29 +39,357 @@
       <div class="row g-2 align-items-center">
         <div class="col">
           <h2 class="page-title">Протоколи CAP</h2>
+          <div class="text-muted mt-1" id="page-subtitle">Оберіть протокол для заповнення</div>
+        </div>
+        <div class="col-auto d-none" id="header-actions">
+          <button class="btn btn-outline-secondary btn-sm" id="btn-back">
+            <i class="ti ti-arrow-left me-1"></i>До списку
+          </button>
+          <button class="btn btn-primary btn-sm ms-2" id="btn-new-case">
+            <i class="ti ti-file-plus me-1"></i>Створити заключення
+          </button>
         </div>
       </div>
     </div>
   </div>
   <div class="page-body">
     <div class="container-fluid">
-      <div class="card">
-        <div class="card-body text-center py-5 text-muted">
-          Розділ в розробці
+
+      <!-- Список -->
+      <div id="view-list">
+        <div class="row g-3" id="protocol-list"></div>
+      </div>
+
+      <!-- Форма -->
+      <div id="view-form" class="d-none">
+        <div class="row g-3">
+          <div class="col-lg-7" id="cap-form"></div>
+          <div class="col-lg-5">
+            <div class="card sticky-top" style="top:80px">
+              <div class="card-header">
+                <h3 class="card-title"><i class="ti ti-eye me-2"></i>Синоптик</h3>
+              </div>
+              <div class="card-body p-2">
+                <div class="synoptic-preview" id="synoptic-text">Заповніть форму...</div>
+              </div>
+              <div class="card-footer">
+                <button class="btn btn-outline-primary btn-sm w-100" id="btn-copy">
+                  <i class="ti ti-copy me-1"></i>Копіювати синоптик
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+
     </div>
   </div>
 </div>
+
 <script type="module">
-  import { requireAuth } from '/morpheos-path/js/auth.js';
-  import { renderShell } from '/morpheos-path/js/shell.js';
-  async function init() {
-    await requireAuth();
-    await renderShell('cap');
-    document.body.classList.add('loaded');
+import { requireAuth } from '/morpheos-path/js/auth.js';
+import { renderShell, toast } from '/morpheos-path/js/shell.js';
+
+const PROTOCOLS = [
+  {
+    id: 'cap_endometrium',
+    title: 'Карцинома ендометрія',
+    version: '5.1.0.0',
+    date: '2024-12',
+    description: 'CAP протокол для карциноми ендометрія. AJCC 8-е видання, FIGO 2023.',
+    file: '/morpheos-path/cap_endometrium_schema.json',
+  },
+];
+
+let schema = null;
+let state = {};
+
+async function init() {
+  await requireAuth();
+  await renderShell('cap');
+  renderList();
+  document.body.classList.add('loaded');
+}
+
+// ── СПИСОК ──
+function renderList() {
+  document.getElementById('protocol-list').innerHTML = PROTOCOLS.map(p => `
+    <div class="col-md-4">
+      <div class="card protocol-card h-100">
+        <div class="card-body">
+          <div class="fw-semibold mb-1">${p.title}</div>
+          <div class="text-muted small mb-2">v${p.version} · ${p.date}</div>
+          <p class="text-muted small mb-0">${p.description}</p>
+        </div>
+        <div class="card-footer">
+          <button class="btn btn-primary btn-sm w-100" onclick="openProto('${p.id}')">
+            <i class="ti ti-forms me-1"></i>Відкрити
+          </button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ── ВІДКРИТИ ──
+window.openProto = async (id) => {
+  const proto = PROTOCOLS.find(p => p.id === id);
+  if (!proto) return;
+  try {
+    const r = await fetch(proto.file);
+    schema = await r.json();
+  } catch { toast('Помилка завантаження', 'error'); return; }
+
+  state = {};
+  document.getElementById('view-list').classList.add('d-none');
+  document.getElementById('view-form').classList.remove('d-none');
+  document.getElementById('header-actions').classList.remove('d-none');
+  document.getElementById('page-subtitle').textContent = schema.template_name_uk;
+  renderForm();
+  updateSynoptic();
+};
+
+// ── НАЗАД ──
+document.getElementById('btn-back').addEventListener('click', () => {
+  document.getElementById('view-list').classList.remove('d-none');
+  document.getElementById('view-form').classList.add('d-none');
+  document.getElementById('header-actions').classList.add('d-none');
+  document.getElementById('page-subtitle').textContent = 'Оберіть протокол для заповнення';
+  schema = null; state = {};
+});
+
+// ── РЕНДЕР ФОРМИ ──
+function renderForm() {
+  document.getElementById('cap-form').innerHTML = schema.sections.map(s => `
+    <div class="card mb-3">
+      <div class="card-body">
+        <div class="cap-section-title">${s.section_name_uk}</div>
+        ${s.condition_note_uk ? `<div class="cap-note"><i class="ti ti-info-circle me-1"></i>${s.condition_note_uk}</div>` : ''}
+        ${s.fields.map(f => renderField(f)).join('')}
+      </div>
+    </div>`).join('');
+  bindEvents();
+}
+
+function renderField(f) {
+  const label = f.field_name_uk || f.label_uk || '';
+  const badgeHtml = f.required ? '<span class="badge-req">обов\'язково</span>'
+    : f.optional_marker ? '<span class="badge-opt">опціонально</span>' : '';
+  const noteHtml = (f.note_uk || f.condition_note_uk) ? `<div class="cap-note"><i class="ti ti-info-circle me-1"></i>${f.note_uk || f.condition_note_uk}</div>` : '';
+  const inputHtml = buildInput(f);
+  const childHtml = (f.child_fields || []).map(cf => `
+    <div class="cap-child" id="child-${cf.field_id}" data-parent="${f.field_id}" data-trigger="${cf.conditional_on?.value || ''}">
+      ${renderField(cf)}
+    </div>`).join('');
+  const commentHtml = f.comment_field ? `
+    <div class="mt-2">
+      <label class="form-label small text-muted mb-1">${f.comment_field.label_uk}</label>
+      <textarea class="form-control form-control-sm cap-inp" id="f-${f.comment_field.field_id}" data-fid="${f.comment_field.field_id}" rows="1" placeholder="Коментар..."></textarea>
+    </div>` : '';
+
+  return `<div class="cap-field">
+    ${label ? `<div class="cap-field-label">${label} ${badgeHtml}</div>` : ''}
+    ${noteHtml}${inputHtml}${commentHtml}${childHtml}
+  </div>`;
+}
+
+function buildInput(f) {
+  switch (f.type) {
+    case 'single_select': return buildOptions(f, false);
+    case 'multi_select':  return buildOptions(f, true);
+    case 'text': return `<textarea class="form-control form-control-sm cap-inp" id="f-${f.field_id}" data-fid="${f.field_id}" rows="2" placeholder="Введіть текст..."></textarea>`;
+    case 'number': return `<div class="input-group input-group-sm" style="max-width:200px"><input type="number" class="form-control cap-inp" id="f-${f.field_id}" data-fid="${f.field_id}" min="0" step="0.1" placeholder="0">${f.unit ? `<span class="input-group-text">${f.unit}</span>` : ''}</div>`;
+    case 'composite': return (f.subfields||[]).map(sf => `
+      <div class="mb-2">
+        <label class="form-label small text-muted mb-1">${sf.label_uk}</label>
+        <div class="input-group input-group-sm" style="max-width:220px">
+          <input type="number" class="form-control cap-inp" id="f-${sf.field_id}" data-fid="${sf.field_id}" min="0" step="0.1" placeholder="0">
+          ${sf.unit ? `<span class="input-group-text">${sf.unit}</span>` : ''}
+        </div>
+      </div>`).join('');
+    case 'node_group':
+    case 'group': return (f.subfields||[]).map(sf => `
+      <div class="mb-2">
+        <label class="form-label small fw-semibold mb-1">${sf.label_uk}${sf.optional_marker ? ' <span class="text-muted fw-normal">(опц.)</span>' : ''}</label>
+        ${sf.condition_note_uk ? `<div class="cap-note">${sf.condition_note_uk}</div>` : ''}
+        ${buildSubfield(sf)}
+      </div>`).join('');
+    default: return `<input type="text" class="form-control form-control-sm cap-inp" id="f-${f.field_id}" data-fid="${f.field_id}" placeholder="Введіть значення">`;
   }
-  init();
+}
+
+function buildSubfield(sf) {
+  if (sf.type === 'count_or_atleast' || sf.type === 'size_or_atleast')
+    return `<input type="number" class="form-control form-control-sm cap-inp" id="f-${sf.field_id}" data-fid="${sf.field_id}" min="0" step="1" placeholder="0" style="max-width:120px">`;
+  if (sf.type === 'multi_select' && sf.options) return buildOptions(sf, true);
+  if (sf.type === 'boolean')
+    return `<div class="form-check"><input class="form-check-input cap-inp" type="checkbox" id="f-${sf.field_id}" data-fid="${sf.field_id}"><label class="form-check-label small" for="f-${sf.field_id}">${sf.label_uk}</label></div>`;
+  return `<input type="number" class="form-control form-control-sm cap-inp" id="f-${sf.field_id}" data-fid="${sf.field_id}" min="0" step="0.1" placeholder="0" style="max-width:120px">`;
+}
+
+function buildOptions(f, isMulti) {
+  const type = isMulti ? 'checkbox' : 'radio';
+  const name = `grp-${f.field_id}`;
+  return `<div class="cap-options">${(f.options||[]).map(o => `
+    <div class="cap-option" id="opt-${f.field_id}-${o.value}">
+      <input type="${type}" id="f-${f.field_id}-${o.value}" name="${name}" value="${o.value}"
+        class="cap-inp" data-fid="${f.field_id}" data-trigger-child="${o.triggers_child||''}">
+      <label for="f-${f.field_id}-${o.value}">${o.label_uk}</label>
+    </div>
+    ${o.has_text ? `<div class="cap-opt-text"><input type="text" class="form-control form-control-sm cap-opt-extra" data-for="${f.field_id}-${o.value}" placeholder="Уточніть..."></div>` : ''}`).join('')}
+  </div>`;
+}
+
+// ── ПОДІЇ ──
+function bindEvents() {
+  document.querySelectorAll('.cap-inp').forEach(el => {
+    el.addEventListener('change', onInput);
+  });
+  document.querySelectorAll('.cap-opt-extra').forEach(el => {
+    el.addEventListener('input', () => { collectState(); updateSynoptic(); });
+  });
+  document.querySelectorAll('.cap-option input').forEach(inp => {
+    inp.addEventListener('change', () => {
+      const name = inp.name;
+      if (inp.type === 'radio') {
+        document.querySelectorAll(`input[name="${name}"]`).forEach(r => r.closest('.cap-option').classList.remove('selected'));
+      }
+      inp.closest('.cap-option').classList.toggle('selected', inp.checked);
+    });
+  });
+}
+
+function onInput() { collectState(); updateConditionals(); updateSynoptic(); }
+
+// ── СТАН ──
+function collectState() {
+  state = {};
+  document.querySelectorAll('.cap-inp').forEach(el => {
+    const fid = el.dataset.fid;
+    if (!fid) return;
+    if (el.type === 'checkbox') {
+      if (!state[fid]) state[fid] = [];
+      if (el.checked) state[fid].push(el.value);
+    } else if (el.type === 'radio') {
+      if (el.checked) state[fid] = el.value;
+    } else if (el.type === 'number') {
+      if (el.value !== '') state[fid] = parseFloat(el.value);
+    } else {
+      if (el.value.trim()) state[fid] = el.value.trim();
+    }
+  });
+  document.querySelectorAll('.cap-opt-extra').forEach(el => {
+    if (el.value.trim()) state[`_txt_${el.dataset.for}`] = el.value.trim();
+  });
+}
+
+// ── УМОВНІ ──
+function updateConditionals() {
+  document.querySelectorAll('.cap-child').forEach(child => {
+    const pv = state[child.dataset.parent];
+    const tv = child.dataset.trigger;
+    const show = Array.isArray(pv) ? pv.includes(tv) : pv === tv;
+    child.classList.toggle('visible', show);
+  });
+}
+
+// ── СИНОПТИК ──
+function updateSynoptic() {
+  if (!schema) return;
+  const lines = [
+    `СИНОПТИЧНИЙ ЗВІТ CAP`,
+    `${schema.template_name_uk} v${schema.template_version}`,
+    '─'.repeat(50),
+  ];
+  for (const s of schema.sections) {
+    const sl = [];
+    for (const f of s.fields) {
+      const fl = fieldLines(f);
+      if (fl?.length) sl.push(...fl);
+    }
+    if (sl.length) { lines.push('', `▸ ${s.section_name_uk.toUpperCase()}`); lines.push(...sl); }
+  }
+  document.getElementById('synoptic-text').textContent = lines.join('\n');
+}
+
+function fieldLines(f) {
+  const v = state[f.field_id];
+  const label = f.field_name_uk || f.label_uk || f.field_id;
+  const lines = [];
+
+  if (f.type === 'single_select') {
+    if (!v) return null;
+    const opt = (f.options||[]).find(o => o.value === v);
+    if (!opt) return null;
+    let text = opt.label_uk;
+    const tk = `_txt_${f.field_id}-${v}`;
+    if (state[tk]) text += `: ${state[tk]}`;
+    lines.push(`${label}: ${text}`);
+  } else if (f.type === 'multi_select') {
+    if (!v?.length) return null;
+    const selected = (f.options||[]).filter(o => v.includes(o.value));
+    lines.push(`${label}:`);
+    selected.forEach(o => {
+      let t = o.label_uk;
+      const tk = `_txt_${f.field_id}-${o.value}`;
+      if (state[tk]) t += `: ${state[tk]}`;
+      lines.push(`  • ${t}`);
+    });
+  } else if (f.type === 'text') {
+    if (!v) return null;
+    lines.push(`${label}: ${v}`);
+  } else if (f.type === 'number') {
+    if (v === undefined) return null;
+    lines.push(`${label}: ${v}${f.unit ? ' ' + f.unit : ''}`);
+  } else if (f.type === 'composite') {
+    const parts = (f.subfields||[]).filter(sf => state[sf.field_id] !== undefined)
+      .map(sf => `  ${sf.label_uk}: ${state[sf.field_id]}${sf.unit ? ' ' + sf.unit : ''}`);
+    if (!parts.length) return null;
+    lines.push(`${label}:`); lines.push(...parts);
+  } else if (f.type === 'node_group' || f.type === 'group') {
+    const parts = (f.subfields||[]).filter(sf => state[sf.field_id] !== undefined && state[sf.field_id] !== '')
+      .map(sf => `  ${sf.label_uk}: ${state[sf.field_id]}`);
+    if (!parts.length) return null;
+    lines.push(`${label}:`); lines.push(...parts);
+  }
+
+  // Дочірні
+  if (lines.length && f.child_fields) {
+    for (const cf of f.child_fields) {
+      const cl = fieldLines(cf);
+      if (cl) lines.push(...cl.map(l => '  ' + l));
+    }
+  }
+  // Коментар
+  if (f.comment_field) {
+    const cv = state[f.comment_field.field_id];
+    if (cv) lines.push(`  ${f.comment_field.label_uk}: ${cv}`);
+  }
+
+  return lines.length ? lines : null;
+}
+
+// ── КОПІЮВАТИ ──
+document.getElementById('btn-copy').addEventListener('click', () => {
+  const text = document.getElementById('synoptic-text').textContent;
+  navigator.clipboard.writeText(text)
+    .then(() => toast('Синоптик скопійовано'))
+    .catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); ta.remove();
+      toast('Синоптик скопійовано');
+    });
+});
+
+// ── СТВОРИТИ ЗАКЛЮЧЕННЯ ──
+document.getElementById('btn-new-case').addEventListener('click', () => {
+  collectState(); updateSynoptic();
+  const synoptic = document.getElementById('synoptic-text').textContent;
+  sessionStorage.setItem('cap_synoptic', synoptic);
+  window.location.href = '/morpheos-path/pages/cases.html?cap=1';
+});
+
+init();
 </script>
 </body>
 </html>
