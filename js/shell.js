@@ -1,6 +1,6 @@
-import { getProfile, logout } from '/MORPHEUS-PATH/js/auth.js';
+import { getProfile, logout } from '/morpheos-path/js/auth.js';
 
-const BASE = '/MORPHEUS-PATH';
+const BASE = '/morpheos-path';
 
 const ROLE_LABELS = {
   admin:       'Адміністратор',
@@ -98,7 +98,7 @@ export async function renderShell(activePage) {
     if (!link) return;
     const href = link.getAttribute('href');
     if (!href || href.startsWith('#') || href.startsWith('javascript') || link.getAttribute('data-bs-toggle')) return;
-    if (href.startsWith('/MORPHEUS-PATH') || href.startsWith('http') === false) {
+    if (href.startsWith('/morpheos-path') || href.startsWith('http') === false) {
       e.preventDefault();
       document.body.style.opacity = '0';
       setTimeout(() => { window.location.href = href; }, 180);
