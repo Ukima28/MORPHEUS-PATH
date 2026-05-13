@@ -351,7 +351,7 @@
       const comment = c.reports?.block5_comment;
       const icdRaw = c.reports?.block4_icd_code;
       let icdText = '';
-      if (icdRaw) { try { icdText = JSON.parse(icdRaw).map(i => `${i.code}${i.diagnosis_uk ? ' ' + i.diagnosis_uk : ''}`).join('; '); } catch { icdText = icdRaw; } }
+      if (icdRaw) { try { icdText = JSON.parse(icdRaw).map(i => `${i.code}.`).join(' '); } catch { icdText = icdRaw; } }
       const date = c.case_date ? c.case_date.split('-').reverse().join('.') : '____________';
       return `
         <div class="header">Патологоанатомічне заключення № ${c.case_number || '—'}</div>
