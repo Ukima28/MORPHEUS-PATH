@@ -13,6 +13,12 @@
     body { opacity: 0; transition: opacity .05s ease; }
     body.loaded { opacity: 1; }
   </style>
+  <script>
+    (function(){
+      const t = localStorage.getItem('morpheos_theme') || 'ruby';
+      document.documentElement.dataset.theme = t;
+    })();
+  </script>
 </head>
 <body class="antialiased">
 
@@ -143,7 +149,6 @@
 </div>
 
 <!-- Modal: Нове заключення -->
-<button id="modal-new-case-trigger" data-bs-toggle="modal" data-bs-target="#modal-new-case" class="d-none"></button>
 <div class="modal modal-blur fade" id="modal-new-case" tabindex="-1">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
@@ -153,12 +158,10 @@
       </div>
       <div class="modal-body">
         <div id="modal-error" class="alert alert-danger d-none mb-3"></div>
-        <input type="hidden" id="new-org">
         <div class="row g-3">
           <div class="col-md-6">
             <label class="form-label required">Номер дослідження</label>
             <input type="text" class="form-control" id="new-number" placeholder="напр. H-26-0001">
-            <div id="org-display" class="mt-1"></div>
           </div>
           <div class="col-md-6">
             <label class="form-label required">Тип матеріалу</label>
@@ -410,7 +413,7 @@
       case_date: date || new Date().toISOString().split('T')[0],
       patient_id: patId || null, patient_name: patName || null,
       clinical_info: clinical || null, status: 'draft',
-      created_by: profile.id, organization_id: document.getElementById('new-org').value || null,
+      created_by: profile.id, organization_id: null,
     }).select().single();
     if (error) { errEl.textContent = 'Помилка. Перевірте номер дослідження.'; errEl.classList.remove('d-none'); return; }
     await supabase.from('reports').insert({ case_id: data.id });
@@ -459,42 +462,8 @@
   }
 
   function bindEvents() {
-    document.getElementById('btn-new-case')?.addEventListener('click', async () => {
-      const orgInput   = document.getElementById('new-org');
-      const orgDisplay = document.getElementById('org-display');
-      orgDisplay.innerHTML = '';
-      orgInput.value = '';
-
-      let orgs = [];
-      if (profile.role === 'admin') {
-        const { data } = await supabase.from('organizations').select('id, name').order('name');
-        orgs = data || [];
-      } else {
-        const { data } = await supabase
-          .from('user_organizations')
-          .select('organization_id, organizations(id, name)')
-          .eq('user_id', profile.id);
-        orgs = (data || []).map(r => r.organizations).filter(Boolean);
-      }
-
-      if (orgs.length === 0) {
-        // Немає організацій — нічого не показуємо
-      } else if (orgs.length === 1) {
-        // Одна організація — просто текст
-        orgInput.value = orgs[0].id;
-        orgDisplay.innerHTML = `<small class="text-muted"><i class="ti ti-building-hospital me-1"></i>${orgs[0].name}</small>`;
-      } else {
-        // Кілька — dropdown
-        const sel = document.createElement('select');
-        sel.className = 'form-select form-select-sm mt-1';
-        sel.innerHTML = '<option value="">— Без закладу —</option>' +
-          orgs.map(o => `<option value="${o.id}">${o.name}</option>`).join('');
-        sel.addEventListener('change', () => { orgInput.value = sel.value; });
-        orgDisplay.appendChild(sel);
-      }
-
-      document.getElementById('modal-new-case-trigger').click();
-    });
+    document.getElementById('btn-new-case')?.setAttribute('data-bs-toggle', 'modal');
+    document.getElementById('btn-new-case')?.setAttribute('data-bs-target', '#modal-new-case');
     document.getElementById('btn-modal-save').addEventListener('click', createCase);
     // Очистити пошук
     document.getElementById('btn-clear-search').addEventListener('click', () => {
