@@ -49,9 +49,13 @@ export async function renderShell(activePage) {
         </button>
         <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
           <a href="${BASE}/pages/cases.html" class="text-decoration-none">
-            <span class="fw-bold" style="font-size:13px;letter-spacing:.06em;line-height:1.2;display:block">
-              MORPHEОS<br>PATHOLOGY
-            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 32" width="90" height="29" role="img">
+              <title>MORPHEOS PATHOLOGY</title>
+              <text font-family="Arial,sans-serif" font-size="13" font-weight="700" textLength="100" lengthAdjust="spacing">
+                <tspan x="0" y="14" fill="#1a1a1a">MORPHE</tspan><tspan fill="#BA1A32">OS</tspan>
+              </text>
+              <text x="0" y="28" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b" textLength="100" lengthAdjust="spacing">PATHOLOGY</text>
+            </svg>
           </a>
         </h1>
         <div class="navbar-nav flex-row order-md-last">
@@ -66,15 +70,7 @@ export async function renderShell(activePage) {
               </div>
             </a>
             <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-              ${profile.role === 'admin' ? `
-              <div class="dropdown-item-text text-muted small fw-semibold pb-1">Тема</div>
-              <a href="#" class="dropdown-item theme-switcher" data-theme="ruby">
-                <span class="status-dot status-dot-animated me-2" style="background:#BA1A32"></span>Ruby
-              </a>
-              <a href="#" class="dropdown-item theme-switcher" data-theme="dark">
-                <span class="status-dot status-dot-animated me-2" style="background:#1a1f2e;border:1px solid #7b8ab8"></span>Dark
-              </a>
-              <div class="dropdown-divider"></div>` : ''}
+
               <a href="#" id="btn-logout" class="dropdown-item text-danger">
                 <i class="ti ti-logout me-2"></i>Вийти
               </a>
@@ -114,26 +110,9 @@ export async function renderShell(activePage) {
     }
   });
 
-  initTheme();
-  bindThemeSwitcher();
   return profile;
 }
 
-function initTheme() {
-  const saved = localStorage.getItem('morpheos_theme') || 'ruby';
-  document.body.dataset.theme = saved;
-}
-
-function bindThemeSwitcher() {
-  document.querySelectorAll('.theme-switcher').forEach(el => {
-    el.addEventListener('click', e => {
-      e.preventDefault();
-      const theme = el.dataset.theme;
-      document.body.dataset.theme = theme;
-      localStorage.setItem('morpheos_theme', theme);
-    });
-  });
-}
 
 export function toast(message, type = 'success') {
   const colors = { success: '#2fb344', error: '#d63939', info: '#4299e1' };
