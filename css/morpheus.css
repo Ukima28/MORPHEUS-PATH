@@ -21,13 +21,22 @@ body { font-family: 'Inter', sans-serif !important; }
 }
 
 /* ── THEME: RUBY ── */
-body[data-theme="ruby"] {
+body[data-theme="ruby"],
+:root:has(body[data-theme="ruby"]) {
   --tblr-primary:           #BA1A32;
   --tblr-primary-rgb:       186, 26, 50;
   --tblr-primary-lt:        #f8e4e7;
   --tblr-primary-lt-rgb:    248, 228, 231;
   --tblr-link-color:        #BA1A32;
   --tblr-link-hover-color:  #9A152A;
+}
+
+/* Пряме перевизначення Tabler змінних через html */
+html:has([data-theme="ruby"]) {
+  --tblr-primary:           #BA1A32;
+  --tblr-primary-rgb:       186, 26, 50;
+  --tblr-primary-lt:        #f8e4e7;
+  --tblr-primary-lt-rgb:    248, 228, 231;
 }
 
 /* Ruby — navbar */
