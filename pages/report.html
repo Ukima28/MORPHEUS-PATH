@@ -21,6 +21,12 @@
     .btn-icon-delete i::before { color:#d63939 !important; }
     @media print { header.navbar, .no-print { display:none!important; } }
   </style>
+  <script>
+    (function(){
+      const t = localStorage.getItem('morpheos_theme') || 'ruby';
+      document.documentElement.dataset.theme = t;
+    })();
+  </script>
 </head>
 <body class="antialiased">
 
@@ -74,11 +80,11 @@
         <div class="card mb-3">
           <div class="card-body">
             <div class="row g-3">
-              <div class="col-md-4">
+              <div class="col-md-3">
                 <div class="block-label">Номер дослідження</div>
                 <input type="text" class="form-control" id="case-number" placeholder="напр. H-26-0001">
               </div>
-              <div class="col-md-4">
+              <div class="col-md-3">
                 <div class="block-label">Тип матеріалу</div>
                 <select class="form-select" id="material-type">
                   <option value="biopsy">Біопсія діагностична</option>
@@ -88,7 +94,16 @@
                   <option value="other">Інше</option>
                 </select>
               </div>
-              <div class="col-md-4">
+              <div class="col-md-3">
+                <div class="block-label">Заклад</div>
+                <div id="org-field">
+                  <select class="form-select" id="case-org">
+                    <option value="">— Без закладу —</option>
+                  </select>
+                  <div id="org-readonly" class="mt-1 text-muted small d-none"></div>
+                </div>
+              </div>
+              <div class="col-md-3">
                 <div class="block-label">Статус</div>
                 <div class="mt-1"><span id="status-badge" class="badge"></span></div>
               </div>
@@ -255,6 +270,39 @@ async function loadCase() {
 }
 
 // ── RENDER ──
+async function loadOrgField(isReadOnly) {
+  const sel = document.getElementById('case-org');
+  const ro  = document.getElementById('org-readonly');
+
+  // Завантажуємо організації
+  let orgs = [];
+  if (profile.role === 'admin') {
+    const { data } = await supabase.from('organizations').select('id, name').order('name');
+    orgs = data || [];
+  } else {
+    const { data } = await supabase
+      .from('user_organizations')
+      .select('organization_id, organizations(id, name)')
+      .eq('user_id', profile.id);
+    orgs = (data || []).map(r => r.organizations).filter(Boolean);
+  }
+
+  // Заповнюємо dropdown
+  sel.innerHTML = '<option value="">— Без закладу —</option>' +
+    orgs.map(o => `<option value="${o.id}">${o.name}</option>`).join('');
+
+  // Встановлюємо поточний заклад
+  if (caseData.organization_id) sel.value = caseData.organization_id;
+
+  if (isReadOnly) {
+    // Readonly — показуємо текст
+    const org = orgs.find(o => o.id === caseData.organization_id);
+    sel.classList.add('d-none');
+    ro.classList.remove('d-none');
+    ro.innerHTML = `<i class="ti ti-building-hospital me-1"></i>${org?.name || '—'}`;
+  }
+}
+
 function renderForm() {
   document.getElementById('page-title').textContent = `Заключення № ${caseData.case_number || '—'}`;
   document.getElementById('case-number').value    = caseData.case_number || '';
@@ -265,6 +313,9 @@ function renderForm() {
   const badge = document.getElementById('status-badge');
   badge.textContent = STA[caseData.status] || caseData.status;
   badge.className   = `badge bg-${STA_COLOR[caseData.status] || 'secondary'}-lt`;
+
+  // Завантажуємо організації
+  await loadOrgField(isReadOnly);
 
   if (reportData) {
     document.getElementById('block2').value = reportData.block1_macro || '';
@@ -589,9 +640,10 @@ document.getElementById('manual-icd-input').addEventListener('keydown', e => {
 function collectData() {
   return {
     caseUpdate: {
-      case_number:   document.getElementById('case-number').value.trim(),
-      material_type: document.getElementById('material-type').value,
-      case_date:     document.getElementById('exam-date').value || null,
+      case_number:     document.getElementById('case-number').value.trim(),
+      material_type:   document.getElementById('material-type').value,
+      case_date:       document.getElementById('exam-date').value || null,
+      organization_id: document.getElementById('case-org').value || null,
     },
     reportUpdate: {
       block1_macro:      document.getElementById('block2').value,
