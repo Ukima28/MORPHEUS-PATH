@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
-/* ── BASE ── */
 body { font-family: 'Inter', sans-serif !important; }
 
 .mono {
@@ -20,92 +19,6 @@ body { font-family: 'Inter', sans-serif !important; }
   white-space: nowrap;
 }
 
-/* ── THEME: RUBY ── */
-/* CSS змінні — для браузерів що підтримують :has() */
-html:has([data-theme="ruby"]) {
-  --tblr-primary:       #BA1A32;
-  --tblr-primary-rgb:   186, 26, 50;
-  --tblr-primary-lt:    #f8e4e7;
-}
-
-/* Кнопки — пряме перевизначення без CSS змінних */
-[data-theme="ruby"] .btn-primary,
-[data-theme="ruby"] .btn-primary:not(:disabled):not(.disabled) {
-  background-color: #BA1A32 !important;
-  border-color:     #BA1A32 !important;
-  color:            #fff    !important;
-}
-[data-theme="ruby"] .btn-primary:hover,
-[data-theme="ruby"] .btn-primary:focus,
-[data-theme="ruby"] .btn-primary:active {
-  background-color: #9A152A !important;
-  border-color:     #9A152A !important;
-}
-
-/* Outline кнопки */
-[data-theme="ruby"] .btn-outline-primary {
-  color:        #BA1A32 !important;
-  border-color: #BA1A32 !important;
-}
-[data-theme="ruby"] .btn-outline-primary:hover,
-[data-theme="ruby"] .btn-outline-primary:focus {
-  background-color: #BA1A32 !important;
-  border-color:     #BA1A32 !important;
-  color:            #fff    !important;
-}
-
-/* Ghost danger кнопки — зберігаємо червоний */
-[data-theme="ruby"] .btn-ghost-danger { color: #d63939 !important; }
-
-/* Активний пункт navbar */
-[data-theme="ruby"] .navbar-nav .nav-item.active .nav-link {
-  color: #BA1A32 !important;
-}
-
-/* Links */
-[data-theme="ruby"] a.nav-link:hover { color: #BA1A32 !important; }
-
-/* Badges */
-[data-theme="ruby"] .badge.bg-primary {
-  background-color: #BA1A32 !important;
-}
-
-/* Avatar */
-[data-theme="ruby"] .avatar {
-  background-color: #BA1A32 !important;
-}
-
-/* Form focus */
-[data-theme="ruby"] .form-control:focus,
-[data-theme="ruby"] .form-select:focus {
-  border-color: #BA1A32 !important;
-  box-shadow: 0 0 0 0.25rem rgba(186,26,50,.15) !important;
-}
-
-/* Pagination active */
-[data-theme="ruby"] .page-item.active .page-link {
-  background-color: #BA1A32 !important;
-  border-color:     #BA1A32 !important;
-}
-
-/* Dropdown item active */
-[data-theme="ruby"] .dropdown-item.active,
-[data-theme="ruby"] .dropdown-item:active {
-  background-color: #BA1A32 !important;
-}
-
-/* Checkbox/radio checked */
-[data-theme="ruby"] .form-check-input:checked {
-  background-color: #BA1A32 !important;
-  border-color:     #BA1A32 !important;
-}
-
-/* Navbar border */
-[data-theme="ruby"] header.navbar {
-  border-bottom-color: rgba(186,26,50,.15) !important;
-}
-
-/* ── PRINT ── */
 @media print {
   header.navbar, .btn, .floating-bar, .no-print { display: none !important; }
 }
