@@ -12,17 +12,24 @@
   <script>
     // Застосовуємо тему одразу щоб уникнути flash
     (function(){
-      const t = localStorage.getItem('morpheos_theme') || 'default';
+      const t = localStorage.getItem('morpheos_theme') || 'ruby';
       document.documentElement.dataset.theme = t;
     })();
   </script>
 </head>
-<body class="d-flex flex-column loaded">
+<body class="d-flex flex-column loaded" data-theme="ruby">
 <div class="page page-center">
   <div class="container container-tight py-4">
 
-    <div class="text-center mb-4">
-      <img src="/morpheos-path/images/logo.svg" alt="MORPHEOS PATHOLOGY" style="max-width:280px;width:100%">
+    <div class="mb-4" style="padding:0 8px">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 292 145" width="260" role="img">
+        <title>MORPHEOS PATHOLOGY</title>
+        <text font-family="Arial,sans-serif" font-size="54" font-weight="300" letter-spacing="4" textLength="292" lengthAdjust="spacing">
+          <tspan x="0" y="72" fill="#1a1a1a">MORPHE</tspan><tspan fill="#BA1A32">OS</tspan>
+        </text>
+        <text x="0" y="126" font-family="Arial,sans-serif" font-size="54" font-weight="300" letter-spacing="4" fill="#1a1a1a" textLength="292" lengthAdjust="spacing">PATHOLOGY</text>
+        <rect x="0" y="140" width="292" height="2" fill="#BA1A32" opacity="0.5"/>
+      </svg>
     </div>
 
     <div class="card card-md">
