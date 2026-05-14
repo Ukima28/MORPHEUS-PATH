@@ -1,48 +1,78 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 body { font-family: 'Inter', sans-serif !important; }
-
 .mono { font-family: 'JetBrains Mono', monospace !important; font-size: 12px !important; font-weight: 500 !important; }
 
+/* ── RUBY THEME — визначаємо через --tblr-primary щоб Tabler підхопив ── */
 :root {
+  --tblr-primary:             #BA1A32;
+  --tblr-primary-rgb:         186, 26, 50;
+  --tblr-primary-lt:          #fef2f2;
+  --tblr-primary-lt-rgb:      248, 228, 231;
+  --tblr-primary-darken:      #9A152A;
+  --tblr-link-color:          #BA1A32;
+  --tblr-link-hover-color:    #9A152A;
   --mp-ruby:      #BA1A32;
   --mp-ruby-dark: #9A152A;
-  --mp-ruby-lt:   #fef2f2;
-  --mp-ruby-rgb:  186, 26, 50;
 }
 
-header.navbar { border-bottom: 2px solid var(--mp-ruby) !important; }
-.navbar-nav .nav-item.active .nav-link { color: var(--mp-ruby) !important; border-bottom-color: var(--mp-ruby) !important; }
-.navbar-nav .nav-link:hover { color: var(--mp-ruby) !important; }
-.avatar { background-color: var(--mp-ruby) !important; color: #fff !important; }
+/* ── NAVBAR ── */
+header.navbar { border-bottom: 2px solid #BA1A32 !important; }
 
-.btn-primary { background-color: var(--mp-ruby) !important; border-color: var(--mp-ruby) !important; }
-.btn-primary:hover,.btn-primary:focus,.btn-primary:active { background-color: var(--mp-ruby-dark) !important; border-color: var(--mp-ruby-dark) !important; }
-.btn-outline-primary { color: var(--mp-ruby) !important; border-color: var(--mp-ruby) !important; }
-.btn-outline-primary:hover,.btn-outline-primary:focus { background-color: var(--mp-ruby) !important; border-color: var(--mp-ruby) !important; color: #fff !important; }
+/* Прибираємо синю лінію з кнопок navbar */
+.navbar-nav .nav-link {
+  text-decoration: none !important;
+  border-bottom: 2px solid transparent !important;
+}
+.navbar-nav .nav-item.active .nav-link {
+  color: #BA1A32 !important;
+  border-bottom-color: #BA1A32 !important;
+}
+.navbar-nav .nav-link:hover {
+  color: #BA1A32 !important;
+  text-decoration: none !important;
+  border-bottom-color: transparent !important;
+}
 
-.page-item.active .page-link { background-color: var(--mp-ruby) !important; border-color: var(--mp-ruby) !important; }
-.form-check-input:checked { background-color: var(--mp-ruby) !important; border-color: var(--mp-ruby) !important; }
-.form-control:focus,.form-select:focus { border-color: var(--mp-ruby) !important; box-shadow: 0 0 0 .25rem rgba(186,26,50,.15) !important; }
-.badge.bg-primary { background-color: var(--mp-ruby) !important; }
+/* ── АВАТАР ── */
+.avatar { background-color: #BA1A32 !important; color: #fff !important; }
 
-.mono.text-primary, a.mono { color: var(--mp-ruby) !important; }
+/* ── КНОПКИ ── */
+.btn-primary { background-color: #BA1A32 !important; border-color: #BA1A32 !important; }
+.btn-primary:hover,.btn-primary:focus,.btn-primary:active { background-color: #9A152A !important; border-color: #9A152A !important; }
+.btn-outline-primary { color: #BA1A32 !important; border-color: #BA1A32 !important; }
+.btn-outline-primary:hover,.btn-outline-primary:focus { background-color: #BA1A32 !important; border-color: #BA1A32 !important; color: #fff !important; }
+
+/* ── ФОРМИ — фокус і вибір ── */
+.form-control:focus,.form-select:focus { border-color: #BA1A32 !important; box-shadow: 0 0 0 .25rem rgba(186,26,50,.15) !important; }
+.form-check-input:checked { background-color: #BA1A32 !important; border-color: #BA1A32 !important; }
+
+/* ── DROPDOWN — активний елемент ── */
+.dropdown-item.active,.dropdown-item:active { background-color: #BA1A32 !important; }
+
+/* ── PAGINATION ── */
+.page-item.active .page-link { background-color: #BA1A32 !important; border-color: #BA1A32 !important; }
+
+/* ── BADGES ── */
+.badge.bg-primary { background-color: #BA1A32 !important; }
+
+/* ── ТАБЛИЦЯ ── */
+.mono.text-primary, a.mono { color: #BA1A32 !important; }
 .table-hover tbody tr:hover td { background-color: #fff5f5 !important; }
-
-.block-label { color: var(--mp-ruby) !important; border-left: 2px solid var(--mp-ruby); padding-left: 8px; }
-
 .table-clickable tbody tr { cursor: pointer; }
-.floating-bar { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 1050; white-space: nowrap; }
 
-@media print { header.navbar, .btn, .floating-bar, .no-print { display: none !important; } }
+/* ── BLOCK LABEL ── */
+.block-label { color: #BA1A32 !important; border-left: 2px solid #BA1A32; padding-left: 8px; }
 
-/* Navbar — прибираємо синє підкреслення */
-.navbar-nav .nav-link { text-decoration: none !important; color: inherit; }
-.navbar-nav .nav-link:hover { text-decoration: none !important; }
-
-/* Фон — темніший */
+/* ── ФОН ── */
 body, .page-wrapper { background-color: #e8ecf0 !important; }
 
-/* Логін — кнопка рубінова (явне перевизначення) */
+/* ── ЛОГІН кнопка ── */
 #btn-login { background-color: #BA1A32 !important; border-color: #BA1A32 !important; color: #fff !important; }
 #btn-login:hover { background-color: #9A152A !important; border-color: #9A152A !important; }
+
+/* ── LAYOUT ── */
+.floating-bar { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 1050; white-space: nowrap; }
+
+/* ── PRINT ── */
+@media print { header.navbar, .btn, .floating-bar, .no-print { display: none !important; } }
