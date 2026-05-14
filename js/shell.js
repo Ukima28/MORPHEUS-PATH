@@ -66,6 +66,15 @@ export async function renderShell(activePage) {
               </div>
             </a>
             <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+              ${profile.role === 'admin' ? `
+              <div class="dropdown-item-text text-muted small fw-semibold pb-1">Тема</div>
+              <a href="#" class="dropdown-item theme-switcher" data-theme="default">
+                <span class="status-dot status-dot-animated bg-blue me-2"></span>Default
+              </a>
+              <a href="#" class="dropdown-item theme-switcher" data-theme="ruby">
+                <span class="status-dot status-dot-animated me-2" style="background:#BA1A32"></span>Ruby
+              </a>
+              <div class="dropdown-divider"></div>` : ''}
               <a href="#" id="btn-logout" class="dropdown-item text-danger">
                 <i class="ti ti-logout me-2"></i>Вийти
               </a>
@@ -105,7 +114,25 @@ export async function renderShell(activePage) {
     }
   });
 
+  initTheme();
+  bindThemeSwitcher();
   return profile;
+}
+
+function initTheme() {
+  const saved = localStorage.getItem('morpheos_theme') || 'default';
+  document.body.dataset.theme = saved;
+}
+
+function bindThemeSwitcher() {
+  document.querySelectorAll('.theme-switcher').forEach(el => {
+    el.addEventListener('click', e => {
+      e.preventDefault();
+      const theme = el.dataset.theme;
+      document.body.dataset.theme = theme;
+      localStorage.setItem('morpheos_theme', theme);
+    });
+  });
 }
 
 export function toast(message, type = 'success') {
