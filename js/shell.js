@@ -68,11 +68,11 @@ export async function renderShell(activePage) {
             <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
               ${profile.role === 'admin' ? `
               <div class="dropdown-item-text text-muted small fw-semibold pb-1">Тема</div>
-              <a href="#" class="dropdown-item theme-switcher" data-theme="default">
-                <span class="status-dot status-dot-animated bg-blue me-2"></span>Default
-              </a>
               <a href="#" class="dropdown-item theme-switcher" data-theme="ruby">
                 <span class="status-dot status-dot-animated me-2" style="background:#BA1A32"></span>Ruby
+              </a>
+              <a href="#" class="dropdown-item theme-switcher" data-theme="dark">
+                <span class="status-dot status-dot-animated me-2" style="background:#1a1f2e;border:1px solid #7b8ab8"></span>Dark
               </a>
               <div class="dropdown-divider"></div>` : ''}
               <a href="#" id="btn-logout" class="dropdown-item text-danger">
@@ -120,7 +120,7 @@ export async function renderShell(activePage) {
 }
 
 function initTheme() {
-  const saved = localStorage.getItem('morpheos_theme') || 'default';
+  const saved = localStorage.getItem('morpheos_theme') || 'ruby';
   document.body.dataset.theme = saved;
 }
 
