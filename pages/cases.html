@@ -27,7 +27,7 @@
           <div class="text-muted mt-1">Патологоанатомічні заключення лабораторії</div>
         </div>
         <div class="col-auto ms-auto d-print-none">
-          <button class="btn btn-primary" id="btn-new-case" data-bs-toggle="modal" data-bs-target="#modal-new-case">
+          <button class="btn btn-primary" id="btn-new-case">
             <i class="ti ti-plus"></i>
             Нове заключення
           </button>
@@ -165,6 +165,12 @@
               <option value="surgical">Операційний матеріал</option>
               <option value="cytology">Цитологія</option>
               <option value="other">Інше</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Заклад</label>
+            <select class="form-select" id="new-org">
+              <option value="">— Без закладу —</option>
             </select>
           </div>
           <div class="col-md-6">
@@ -407,7 +413,7 @@
       case_date: date || new Date().toISOString().split('T')[0],
       patient_id: patId || null, patient_name: patName || null,
       clinical_info: clinical || null, status: 'draft',
-      created_by: profile.id, organization_id: profile.organization_id || null,
+      created_by: profile.id, organization_id: document.getElementById('new-org').value || null,
     }).select().single();
     if (error) { errEl.textContent = 'Помилка. Перевірте номер дослідження.'; errEl.classList.remove('d-none'); return; }
     await supabase.from('reports').insert({ case_id: data.id });
@@ -456,7 +462,29 @@
   }
 
   function bindEvents() {
-    // modal opens via data-bs-toggle
+    document.getElementById('btn-new-case')?.addEventListener('click', async () => {
+      const orgSel = document.getElementById('new-org');
+      if (orgSel.options.length <= 1) {
+        if (profile.role === 'admin') {
+          const { data } = await supabase.from('organizations').select('id, name').order('name');
+          (data || []).forEach(o => {
+            const opt = document.createElement('option');
+            opt.value = o.id; opt.textContent = o.name; orgSel.appendChild(opt);
+          });
+        } else {
+          const { data } = await supabase
+            .from('user_organizations')
+            .select('organization_id, organizations(id, name)')
+            .eq('user_id', profile.id);
+          (data || []).forEach(row => {
+            const o = row.organizations;
+            if (o) { const opt = document.createElement('option'); opt.value = o.id; opt.textContent = o.name; orgSel.appendChild(opt); }
+          });
+          if (orgSel.options.length === 2) orgSel.selectedIndex = 1;
+        }
+      }
+      new window.bootstrap.Modal(document.getElementById('modal-new-case')).show();
+    });
     document.getElementById('btn-modal-save').addEventListener('click', createCase);
     // Очистити пошук
     document.getElementById('btn-clear-search').addEventListener('click', () => {
