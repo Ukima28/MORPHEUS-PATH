@@ -308,6 +308,18 @@ async function renderForm() {
   badge.textContent = STA[caseData.status] || caseData.status;
   badge.className   = `badge bg-${STA_COLOR[caseData.status] || 'secondary'}-lt`;
 
+  // Права доступу — визначаємо ДО використання
+  const isSigned      = caseData.status === 'signed';
+  const isOwner       = caseData.created_by === profile.id;
+  const isAdmin       = profile.role === 'admin';
+  const isPathologist = profile.role === 'pathologist';
+  const isLaborant    = profile.role === 'laborant';
+  const isRegistrar   = profile.role === 'registrar';
+  const isReadOnly    = (isSigned && !isAdmin) || isRegistrar ||
+    (isLaborant && caseData.status !== 'draft') ||
+    (isPathologist && !isOwner);
+  _isReadOnly = isReadOnly;
+
   // Завантажуємо організації
   await loadOrgField(isReadOnly);
 
@@ -327,22 +339,7 @@ async function renderForm() {
 
   renderCassettes();
 
-  // Права доступу
-  const isSigned    = caseData.status === 'signed';
-  const isOwner     = caseData.created_by === profile.id;
-  const isAdmin     = profile.role === 'admin';
-  const isPathologist = profile.role === 'pathologist';
-  const isLaborant  = profile.role === 'laborant';
-  const isRegistrar = profile.role === 'registrar';
 
-  // Readonly якщо: підписано | реєстратор | laborant не в draft | pathologist чужий запис
-  const isReadOnly =
-    (isSigned && !isAdmin) ||
-    isRegistrar ||
-    (isLaborant && caseData.status !== 'draft') ||
-    (isPathologist && !isOwner);
-
-  _isReadOnly = isReadOnly;
   if (isReadOnly) {
     document.querySelectorAll('#report-form input, #report-form textarea, #report-form select').forEach(el => el.disabled = true);
     document.getElementById('btn-save').classList.add('d-none');
