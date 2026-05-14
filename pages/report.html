@@ -488,20 +488,53 @@ async function searchTemplates() {
   if (!data?.length) { list.innerHTML = '<div class="list-group-item text-muted">Шаблонів не знайдено</div>'; return; }
 
   list.innerHTML = data.map((t, idx) => `
-    <button class="list-group-item list-group-item-action tmpl-item" data-idx="${idx}">
-      <div class="fw-semibold">${t.name}</div>
-      <div class="text-muted small">${t.system_organ || ''}</div>
-    </button>`).join('');
+    <div class="list-group-item py-2">
+      <div class="d-flex align-items-center justify-content-between gap-2">
+        <div>
+          <div class="fw-semibold">${t.name}</div>
+          <div class="text-muted small">${t.system_organ || ''}</div>
+        </div>
+        <div class="d-flex gap-1 flex-shrink-0">
+          <button class="btn btn-sm btn-outline-danger tmpl-replace" data-idx="${idx}" title="Замінити поточний текст">
+            Замінити
+          </button>
+          <button class="btn btn-sm btn-outline-primary tmpl-append" data-idx="${idx}" title="Додати до поточного тексту">
+            Додати
+          </button>
+        </div>
+      </div>
+    </div>`).join('');
 
-  list.querySelectorAll('.tmpl-item').forEach((btn, idx) =>
-    btn.addEventListener('click', () => {
-      const t = data[idx];
+  function applyTemplate(t, mode) {
+    if (mode === 'replace') {
       if (t.micro_description) document.getElementById('block2').value = t.micro_description;
       if (t.diagnosis)         document.getElementById('block3').value = t.diagnosis;
       if (t.icd_code) { icdSelected = [{ code: t.icd_code, diagnosis_uk: '' }]; renderIcdSelected(); }
-      closeTemplateModal();
       toast('Шаблон застосовано');
-    }));
+    } else {
+      // Додати через пробіл
+      const b2 = document.getElementById('block2');
+      const b3 = document.getElementById('block3');
+      if (t.micro_description) {
+        b2.value = b2.value ? b2.value.trimEnd() + ' ' + t.micro_description : t.micro_description;
+      }
+      if (t.diagnosis) {
+        b3.value = b3.value ? b3.value.trimEnd() + ' ' + t.diagnosis : t.diagnosis;
+      }
+      if (t.icd_code && !icdSelected.find(i => i.code === t.icd_code)) {
+        icdSelected.push({ code: t.icd_code, diagnosis_uk: '' });
+        renderIcdSelected();
+      }
+      toast('Шаблон додано');
+    }
+  }
+
+  list.querySelectorAll('.tmpl-replace').forEach((btn, idx) =>
+    btn.addEventListener('click', () => { applyTemplate(data[idx], 'replace'); closeTemplateModal(); })
+  );
+  list.querySelectorAll('.tmpl-append').forEach((btn, idx) =>
+    btn.addEventListener('click', () => { applyTemplate(data[idx], 'append'); })
+  );
 }
 
 document.getElementById('template-search').addEventListener('input', () => {
