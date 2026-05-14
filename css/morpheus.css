@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
+/* ── BASE ── */
 body { font-family: 'Inter', sans-serif !important; }
 
 .mono {
@@ -19,6 +20,65 @@ body { font-family: 'Inter', sans-serif !important; }
   white-space: nowrap;
 }
 
+/* ── THEME: DEFAULT (Tabler blue — без змін) ── */
+body[data-theme="default"] {
+  /* Tabler defaults */
+}
+
+/* ── THEME: RUBY ── */
+body[data-theme="ruby"] {
+  --tblr-primary:           #BA1A32;
+  --tblr-primary-rgb:       186, 26, 50;
+  --tblr-primary-lt:        #f8e4e7;
+  --tblr-primary-lt-rgb:    248, 228, 231;
+  --tblr-link-color:        #BA1A32;
+  --tblr-link-hover-color:  #9A152A;
+}
+
+/* Ruby — navbar */
+body[data-theme="ruby"] header.navbar {
+  border-bottom-color: rgba(186, 26, 50, 0.15);
+}
+
+/* Ruby — кнопки */
+body[data-theme="ruby"] .btn-primary {
+  --tblr-btn-bg:                 #BA1A32;
+  --tblr-btn-border-color:       #BA1A32;
+  --tblr-btn-hover-bg:           #9A152A;
+  --tblr-btn-hover-border-color: #9A152A;
+  --tblr-btn-active-bg:          #9A152A;
+  --tblr-btn-active-border-color:#9A152A;
+}
+
+/* Ruby — outline кнопки */
+body[data-theme="ruby"] .btn-outline-primary {
+  --tblr-btn-color:              #BA1A32;
+  --tblr-btn-border-color:       #BA1A32;
+  --tblr-btn-hover-bg:           #BA1A32;
+  --tblr-btn-hover-border-color: #BA1A32;
+}
+
+/* Ruby — активний пункт navbar */
+body[data-theme="ruby"] .navbar-nav .nav-item.active .nav-link {
+  color: #BA1A32 !important;
+}
+
+/* Ruby — badges */
+body[data-theme="ruby"] .badge.bg-primary { background-color: #BA1A32 !important; }
+
+/* Ruby — form focus */
+body[data-theme="ruby"] .form-control:focus,
+body[data-theme="ruby"] .form-select:focus {
+  border-color: #BA1A32;
+  box-shadow: 0 0 0 0.25rem rgba(186, 26, 50, 0.15);
+}
+
+/* Ruby — avatar */
+body[data-theme="ruby"] .avatar[style*="tblr-primary"] {
+  background: #BA1A32 !important;
+}
+
+/* ── PRINT ── */
 @media print {
   header.navbar, .btn, .floating-bar, .no-print { display: none !important; }
 }
