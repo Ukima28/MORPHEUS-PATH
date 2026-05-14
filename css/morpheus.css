@@ -21,70 +21,88 @@ body { font-family: 'Inter', sans-serif !important; }
 }
 
 /* ── THEME: RUBY ── */
-body[data-theme="ruby"],
-:root:has(body[data-theme="ruby"]) {
-  --tblr-primary:           #BA1A32;
-  --tblr-primary-rgb:       186, 26, 50;
-  --tblr-primary-lt:        #f8e4e7;
-  --tblr-primary-lt-rgb:    248, 228, 231;
-  --tblr-link-color:        #BA1A32;
-  --tblr-link-hover-color:  #9A152A;
-}
-
-/* Пряме перевизначення Tabler змінних через html */
+/* CSS змінні — для браузерів що підтримують :has() */
 html:has([data-theme="ruby"]) {
-  --tblr-primary:           #BA1A32;
-  --tblr-primary-rgb:       186, 26, 50;
-  --tblr-primary-lt:        #f8e4e7;
-  --tblr-primary-lt-rgb:    248, 228, 231;
+  --tblr-primary:       #BA1A32;
+  --tblr-primary-rgb:   186, 26, 50;
+  --tblr-primary-lt:    #f8e4e7;
 }
 
-/* Ruby — navbar */
-body[data-theme="ruby"] header.navbar {
-  border-bottom-color: rgba(186, 26, 50, 0.15);
+/* Кнопки — пряме перевизначення без CSS змінних */
+[data-theme="ruby"] .btn-primary,
+[data-theme="ruby"] .btn-primary:not(:disabled):not(.disabled) {
+  background-color: #BA1A32 !important;
+  border-color:     #BA1A32 !important;
+  color:            #fff    !important;
+}
+[data-theme="ruby"] .btn-primary:hover,
+[data-theme="ruby"] .btn-primary:focus,
+[data-theme="ruby"] .btn-primary:active {
+  background-color: #9A152A !important;
+  border-color:     #9A152A !important;
 }
 
-/* Ruby — кнопки */
-body[data-theme="ruby"] .btn-primary {
-  --tblr-btn-bg:                 #BA1A32;
-  --tblr-btn-border-color:       #BA1A32;
-  --tblr-btn-hover-bg:           #9A152A;
-  --tblr-btn-hover-border-color: #9A152A;
-  --tblr-btn-active-bg:          #9A152A;
-  --tblr-btn-active-border-color:#9A152A;
+/* Outline кнопки */
+[data-theme="ruby"] .btn-outline-primary {
+  color:        #BA1A32 !important;
+  border-color: #BA1A32 !important;
+}
+[data-theme="ruby"] .btn-outline-primary:hover,
+[data-theme="ruby"] .btn-outline-primary:focus {
+  background-color: #BA1A32 !important;
+  border-color:     #BA1A32 !important;
+  color:            #fff    !important;
 }
 
-/* Ruby — outline кнопки */
-body[data-theme="ruby"] .btn-outline-primary {
-  --tblr-btn-color:              #BA1A32;
-  --tblr-btn-border-color:       #BA1A32;
-  --tblr-btn-hover-bg:           #BA1A32;
-  --tblr-btn-hover-border-color: #BA1A32;
-}
+/* Ghost danger кнопки — зберігаємо червоний */
+[data-theme="ruby"] .btn-ghost-danger { color: #d63939 !important; }
 
-/* Ruby — активний пункт navbar */
-body[data-theme="ruby"] .navbar-nav .nav-item.active .nav-link {
+/* Активний пункт navbar */
+[data-theme="ruby"] .navbar-nav .nav-item.active .nav-link {
   color: #BA1A32 !important;
 }
 
-/* Ruby — badges */
-body[data-theme="ruby"] .badge.bg-primary { background-color: #BA1A32 !important; }
+/* Links */
+[data-theme="ruby"] a.nav-link:hover { color: #BA1A32 !important; }
 
-/* Ruby — form focus */
-body[data-theme="ruby"] .form-control:focus,
-body[data-theme="ruby"] .form-select:focus {
-  border-color: #BA1A32;
-  box-shadow: 0 0 0 0.25rem rgba(186, 26, 50, 0.15);
+/* Badges */
+[data-theme="ruby"] .badge.bg-primary {
+  background-color: #BA1A32 !important;
 }
 
-/* Ruby — avatar */
-body[data-theme="ruby"] .avatar[style*="tblr-primary"] {
-  background: #BA1A32 !important;
+/* Avatar */
+[data-theme="ruby"] .avatar {
+  background-color: #BA1A32 !important;
 }
 
-/* ── PRINT ── */
-@media print {
-  header.navbar, .btn, .floating-bar, .no-print { display: none !important; }
+/* Form focus */
+[data-theme="ruby"] .form-control:focus,
+[data-theme="ruby"] .form-select:focus {
+  border-color: #BA1A32 !important;
+  box-shadow: 0 0 0 0.25rem rgba(186,26,50,.15) !important;
+}
+
+/* Pagination active */
+[data-theme="ruby"] .page-item.active .page-link {
+  background-color: #BA1A32 !important;
+  border-color:     #BA1A32 !important;
+}
+
+/* Dropdown item active */
+[data-theme="ruby"] .dropdown-item.active,
+[data-theme="ruby"] .dropdown-item:active {
+  background-color: #BA1A32 !important;
+}
+
+/* Checkbox/radio checked */
+[data-theme="ruby"] .form-check-input:checked {
+  background-color: #BA1A32 !important;
+  border-color:     #BA1A32 !important;
+}
+
+/* Navbar border */
+[data-theme="ruby"] header.navbar {
+  border-bottom-color: rgba(186,26,50,.15) !important;
 }
 
 /* ── PRINT ── */
