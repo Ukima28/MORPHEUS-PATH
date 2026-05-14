@@ -2,23 +2,36 @@
 
 body { font-family: 'Inter', sans-serif !important; }
 
-.mono {
-  font-family: 'JetBrains Mono', monospace !important;
-  font-size: 12px !important;
-  font-weight: 500 !important;
+.mono { font-family: 'JetBrains Mono', monospace !important; font-size: 12px !important; font-weight: 500 !important; }
+
+:root {
+  --mp-ruby:      #BA1A32;
+  --mp-ruby-dark: #9A152A;
+  --mp-ruby-lt:   #fef2f2;
+  --mp-ruby-rgb:  186, 26, 50;
 }
+
+header.navbar { border-bottom: 2px solid var(--mp-ruby) !important; }
+.navbar-nav .nav-item.active .nav-link { color: var(--mp-ruby) !important; border-bottom-color: var(--mp-ruby) !important; }
+.navbar-nav .nav-link:hover { color: var(--mp-ruby) !important; }
+.avatar { background-color: var(--mp-ruby) !important; color: #fff !important; }
+
+.btn-primary { background-color: var(--mp-ruby) !important; border-color: var(--mp-ruby) !important; }
+.btn-primary:hover,.btn-primary:focus,.btn-primary:active { background-color: var(--mp-ruby-dark) !important; border-color: var(--mp-ruby-dark) !important; }
+.btn-outline-primary { color: var(--mp-ruby) !important; border-color: var(--mp-ruby) !important; }
+.btn-outline-primary:hover,.btn-outline-primary:focus { background-color: var(--mp-ruby) !important; border-color: var(--mp-ruby) !important; color: #fff !important; }
+
+.page-item.active .page-link { background-color: var(--mp-ruby) !important; border-color: var(--mp-ruby) !important; }
+.form-check-input:checked { background-color: var(--mp-ruby) !important; border-color: var(--mp-ruby) !important; }
+.form-control:focus,.form-select:focus { border-color: var(--mp-ruby) !important; box-shadow: 0 0 0 .25rem rgba(186,26,50,.15) !important; }
+.badge.bg-primary { background-color: var(--mp-ruby) !important; }
+
+.mono.text-primary, a.mono { color: var(--mp-ruby) !important; }
+.table-hover tbody tr:hover td { background-color: #fff5f5 !important; }
+
+.block-label { color: var(--mp-ruby) !important; border-left: 2px solid var(--mp-ruby); padding-left: 8px; }
 
 .table-clickable tbody tr { cursor: pointer; }
+.floating-bar { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 1050; white-space: nowrap; }
 
-.floating-bar {
-  position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1050;
-  white-space: nowrap;
-}
-
-@media print {
-  header.navbar, .btn, .floating-bar, .no-print { display: none !important; }
-}
+@media print { header.navbar, .btn, .floating-bar, .no-print { display: none !important; } }
