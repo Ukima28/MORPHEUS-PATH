@@ -143,6 +143,7 @@
 </div>
 
 <!-- Modal: Нове заключення -->
+<button id="modal-new-case-trigger" data-bs-toggle="modal" data-bs-target="#modal-new-case" class="d-none"></button>
 <div class="modal modal-blur fade" id="modal-new-case" tabindex="-1">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
@@ -483,7 +484,8 @@
           if (orgSel.options.length === 2) orgSel.selectedIndex = 1;
         }
       }
-      new window.bootstrap.Modal(document.getElementById('modal-new-case')).show();
+      // Відкриваємо модалку через click на прихованому тригері
+      document.getElementById('modal-new-case-trigger').click();
     });
     document.getElementById('btn-modal-save').addEventListener('click', createCase);
     // Очистити пошук
