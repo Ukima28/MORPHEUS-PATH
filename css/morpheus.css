@@ -96,16 +96,6 @@ button#btn-login.btn.btn-primary.w-100:hover {
   border-color: #BA1A32 !important;
 }
 
-/* Дропдауни — рубіновий highlight */
-select,
-.form-select {
-  accent-color: #BA1A32;
-}
-option:checked,
-option:hover {
-  background-color: #BA1A32 !important;
-  color: #fff !important;
-}
 
 /* ── DROPDOWN ── */
 .dropdown-item.active,
@@ -146,6 +136,16 @@ body,
   transform: translateX(-50%);
   z-index: 1050;
   white-space: nowrap;
+}
+
+/* ── АНІМАЦІЯ ПЕРЕХОДІВ ── */
+body {
+  opacity: 0;
+  animation: pageIn 300ms ease forwards;
+}
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ── PRINT ── */
