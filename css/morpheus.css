@@ -16,7 +16,7 @@ body { font-family: 'Inter', sans-serif !important; }
 
 /* ── NAVBAR ── */
 header.navbar {
-  border-bottom: 1px solid #e2e8f0 !important;
+  border-bottom: 2px solid #BA1A32 !important;
   box-shadow: none !important;
 }
 
@@ -111,11 +111,23 @@ button#btn-login.btn.btn-primary.w-100:hover {
 
 /* ── BADGES ── */
 .badge.bg-primary { background-color: #BA1A32 !important; }
+.badge.bg-success-lt { background-color: #16a34a !important; color: #fff !important; border: none !important; }
+.badge.bg-secondary-lt { background-color: #64748b !important; color: #fff !important; border: none !important; }
+.badge.bg-warning-lt { background-color: #d97706 !important; color: #fff !important; border: none !important; }
 
 /* ── ТАБЛИЦЯ ── */
 .mono.text-primary, a.mono { color: #BA1A32 !important; }
-.table-hover tbody tr:hover td { background-color: #fff5f5 !important; }
+
+/* Зебра */
+.table tbody tr:nth-child(odd) td  { background-color: #ffffff !important; }
+.table tbody tr:nth-child(even) td { background-color: #f4f6f9 !important; }
+.table-hover tbody tr:hover td,
+.table tbody tr:hover td { background-color: #fef2f2 !important; }
 .table-clickable tbody tr { cursor: pointer; }
+
+/* Контрастніший текст */
+.table tbody td { color: #1e293b !important; }
+.table thead th { color: #475569 !important; background-color: #eef0f4 !important; }
 
 /* ── BLOCK LABEL ── */
 .block-label {
@@ -126,7 +138,7 @@ button#btn-login.btn.btn-primary.w-100:hover {
 
 /* ── ФОН ── */
 body,
-.page-wrapper { background-color: #e8ecf0 !important; }
+.page-wrapper { background-color: #d4d9e3 !important; }
 
 /* ── LAYOUT ── */
 .floating-bar {
@@ -149,7 +161,7 @@ body {
 #mp-spinner {
   position: fixed;
   inset: 0;
-  background: #e8ecf0;
+  background: #d4d9e3;
   display: flex;
   flex-direction: column;
   align-items: center;
