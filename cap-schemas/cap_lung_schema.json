@@ -1,0 +1,446 @@
+{
+  "template_id": "cap_lung",
+  "template_version": "5.1.0.0",
+  "template_name_uk": "Карцинома легені",
+  "cap_posting_date": "2025-09",
+  "standard": "AJCC 9",
+  "sections": [
+    {
+      "section_id": "specimen",
+      "section_name_uk": "Препарат",
+      "fields": [
+        {
+          "field_id": "procedure",
+          "field_name_uk": "Процедура",
+          "type": "multi_select",
+          "required": true,
+          "options": [
+            { "value": "wedge_resection", "label_uk": "Клиноподібна резекція" },
+            { "value": "segmentectomy", "label_uk": "Сегментектомія" },
+            { "value": "lobectomy", "label_uk": "Лобектомія" },
+            { "value": "completion_lobectomy", "label_uk": "Завершена лобектомія" },
+            { "value": "sleeve_lobectomy", "label_uk": "Циркулярна (sleeve) лобектомія" },
+            { "value": "bilobectomy", "label_uk": "Білобектомія" },
+            { "value": "pneumonectomy", "label_uk": "Пневмонектомія" },
+            { "value": "major_airway_resection", "label_uk": "Резекція великих дихальних шляхів (уточнити)", "has_text": true },
+            { "value": "adjacent_structures", "label_uk": "Суміжні структури (уточнити)", "has_text": true },
+            { "value": "other", "label_uk": "Інше (уточнити)", "has_text": true },
+            { "value": "not_specified", "label_uk": "Не вказано" }
+          ]
+        },
+        {
+          "field_id": "specimen_laterality",
+          "field_name_uk": "Латеральність препарату",
+          "type": "single_select",
+          "required": true,
+          "options": [
+            { "value": "right", "label_uk": "Права" },
+            { "value": "left", "label_uk": "Ліва" },
+            { "value": "not_specified", "label_uk": "Не вказано" }
+          ]
+        }
+      ]
+    },
+    {
+      "section_id": "tumor",
+      "section_name_uk": "Пухлина",
+      "fields": [
+        {
+          "field_id": "tumor_focality",
+          "field_name_uk": "Фокальність пухлини",
+          "type": "single_select",
+          "required": true,
+          "options": [
+            { "value": "single_focus", "label_uk": "Один фокус" },
+            { "value": "separate_nodules_same_lobe", "label_uk": "Окремі пухлинні вузли (метастази) в тій самій частці (pT3)", "triggers_child": "intrapulmonary_metastases_count" },
+            { "value": "separate_nodules_different_lobe", "label_uk": "Окремі пухлинні вузли (метастази) в іншій іпсилатеральній частці (pT4)", "triggers_child": "intrapulmonary_metastases_count" },
+            { "value": "separate_nodules_contralateral_lobe", "label_uk": "Окремі пухлинні вузли (метастази) в контралатеральній частці (pM1a)" }
+          ],
+          "child_fields": [
+            { "field_id": "intrapulmonary_metastases_count", "label_uk": "Кількість внутрішньолегеневих метастазів", "type": "number" }
+          ]
+        },
+        {
+          "field_id": "tumor_site",
+          "field_name_uk": "Локалізація пухлини",
+          "type": "multi_select",
+          "required": true,
+          "options": [
+            { "value": "upper_lobe", "label_uk": "Верхня частка легені" },
+            { "value": "middle_lobe", "label_uk": "Середня частка легені" },
+            { "value": "lower_lobe", "label_uk": "Нижня частка легені" },
+            { "value": "main_bronchus", "label_uk": "Головний бронх" },
+            { "value": "bronchus_intermedius", "label_uk": "Проміжний бронх" },
+            { "value": "lobar_bronchus", "label_uk": "Частковий бронх (уточнити)", "has_text": true },
+            { "value": "other", "label_uk": "Інше (уточнити)", "has_text": true },
+            { "value": "not_specified", "label_uk": "Не вказано" }
+          ]
+        },
+        {
+          "field_id": "tumor_size",
+          "field_name_uk": "Розмір інвазивної пухлини",
+          "type": "composite",
+          "subfields": [
+            { "field_id": "not_applicable", "label_uk": "Не застосовується", "type": "boolean" },
+            { "field_id": "greatest_dimension_cm", "label_uk": "Найбільший вимір, см", "type": "number" },
+            { "field_id": "additional_dimensions_cm", "label_uk": "Додаткові виміри, см (напр. 2 x 3)", "type": "text" },
+            { "field_id": "cannot_be_determined", "label_uk": "Неможливо визначити (пояснити)", "type": "text" }
+          ]
+        },
+        {
+          "field_id": "histologic_type",
+          "field_name_uk": "Гістологічний тип",
+          "type": "single_select",
+          "required": true,
+          "options": [
+            { "value": "ais_non_mucinous", "label_uk": "Немуцинозна аденокарцинома in situ легені" },
+            { "value": "ais_mucinous", "label_uk": "Муцинозна аденокарцинома in situ легені" },
+            { "value": "mia_non_mucinous", "label_uk": "Немуцинозна мінімально інвазивна аденокарцинома" },
+            { "value": "mia_mucinous", "label_uk": "Муцинозна мінімально інвазивна аденокарцинома" },
+            { "value": "lepidic_adc", "label_uk": "Лепідична аденокарцинома" },
+            { "value": "acinar_adc", "label_uk": "Ацинарна аденокарцинома легені" },
+            { "value": "papillary_adc", "label_uk": "Папілярна аденокарцинома, без інших уточнень" },
+            { "value": "micropapillary_adc", "label_uk": "Мікропапілярна карцинома, без інших уточнень" },
+            { "value": "solid_carcinoma", "label_uk": "Солідна карцинома, без інших уточнень" },
+            { "value": "mucinous_adc", "label_uk": "Муцинозна аденокарцинома легені" },
+            { "value": "mixed_mucinous_non_mucinous", "label_uk": "Змішана муцинозна та немуцинозна аденокарцинома легені" },
+            { "value": "colloid_carcinoma", "label_uk": "Колоїдна карцинома легені" },
+            { "value": "fetal_adc", "label_uk": "Аденокарцинома плода" },
+            { "value": "enteric_adc", "label_uk": "Аденокарцинома кишкового типу" },
+            { "value": "squamous_cell_cis", "label_uk": "Плоскоклітинна карцинома in situ, без інших уточнень" },
+            { "value": "keratinizing_scc", "label_uk": "Зроговіла плоскоклітинна карцинома, без інших уточнень" },
+            { "value": "non_keratinizing_scc", "label_uk": "Незроговіла плоскоклітинна карцинома, без інших уточнень" },
+            { "value": "basaloid_scc", "label_uk": "Базалоїдна плоскоклітинна карцинома" },
+            { "value": "lymphoepithelial", "label_uk": "Лімфоепітеліальна карцинома" },
+            { "value": "large_cell", "label_uk": "Великоклітинна карцинома, без інших уточнень" },
+            { "value": "adenosquamous", "label_uk": "Аденосквомозна карцинома, без інших уточнень" },
+            { "value": "pleomorphic", "label_uk": "Плеоморфна карцинома" },
+            { "value": "pulmonary_blastoma", "label_uk": "Легенева бластома" },
+            { "value": "carcinosarcoma", "label_uk": "Карциносаркома, без інших уточнень" },
+            { "value": "nut_carcinoma", "label_uk": "Карцинома, пов'язана з ядерним білком яєчка (NUT)" },
+            { "value": "adenoid_cystic", "label_uk": "Аденоїдно-кістозна карцинома, без інших уточнень" },
+            { "value": "epithelial_myoepithelial", "label_uk": "Епітеліально-міоепітеліальна карцинома" },
+            { "value": "mucoepidermoid", "label_uk": "Мукоепідермоїдна карцинома, без інших уточнень" },
+            { "value": "hyalinizing_clear_cell", "label_uk": "Гіалінізуюча світлоклітинна карцинома" },
+            { "value": "net_g1", "label_uk": "Нейроендокринна пухлина 1 ступеня (типовий карциноїд)" },
+            { "value": "net_g2", "label_uk": "Нейроендокринна пухлина 2 ступеня (атиповий карциноїд)" },
+            { "value": "net_nos", "label_uk": "Нейроендокринна пухлина, без інших уточнень" },
+            { "value": "small_cell", "label_uk": "Дрібноклітинна карцинома, без інших уточнень" },
+            { "value": "combined_small_cell", "label_uk": "Комбінована дрібноклітинна карцинома", "has_text": true },
+            { "value": "lcnec", "label_uk": "Великоклітинна нейроендокринна карцинома, без інших уточнень" },
+            { "value": "combined_lcnec", "label_uk": "Комбінована великоклітинна нейроендокринна карцинома", "has_text": true },
+            { "value": "carcinoma_nos", "label_uk": "Карцинома, без інших уточнень", "has_text": true },
+            { "value": "non_small_cell_nos", "label_uk": "Недрібноклітинна карцинома", "has_text": true },
+            { "value": "other", "label_uk": "Інший тип (уточнити)", "has_text": true },
+            { "value": "no_viable_tumor", "label_uk": "Життєздатна пухлина відсутня (пояснити)", "has_text": true }
+          ]
+        },
+        {
+          "field_id": "histologic_patterns",
+          "field_name_uk": "Гістологічні патерни (для немуцинозних аденокарцином)",
+          "type": "multi_select",
+          "options": [
+            { "value": "not_applicable", "label_uk": "Не застосовується" },
+            { "value": "acinar", "label_uk": "Ацинарний", "has_text": true },
+            { "value": "papillary", "label_uk": "Папілярний", "has_text": true },
+            { "value": "lepidic", "label_uk": "Лепідичний", "has_text": true },
+            { "value": "solid", "label_uk": "Солідний", "has_text": true },
+            { "value": "micropapillary", "label_uk": "Мікропапілярний", "has_text": true },
+            { "value": "complex_glands", "label_uk": "Складні залози (криброзні та злиті)", "has_text": true },
+            { "value": "other", "label_uk": "Інше (уточнити)", "has_text": true }
+          ]
+        },
+        {
+          "field_id": "histologic_grade",
+          "field_name_uk": "Гістологічний ступінь (Grade)",
+          "type": "single_select",
+          "options": [
+            { "value": "g1", "label_uk": "G1, високодиференційована" },
+            { "value": "g2", "label_uk": "G2, помірнодиференційована" },
+            { "value": "g3", "label_uk": "G3, низькодиференційована" },
+            { "value": "g4", "label_uk": "G4, недиференційована" },
+            { "value": "other", "label_uk": "Інше (уточнити)", "has_text": true },
+            { "value": "gx", "label_uk": "GX, неможливо оцінити" },
+            { "value": "not_applicable", "label_uk": "Не застосовується" }
+          ]
+        },
+        {
+          "field_id": "stas",
+          "field_name_uk": "Поширення через повітряні простори (STAS)",
+          "type": "single_select",
+          "options": [
+            { "value": "not_identified", "label_uk": "Не виявлено" },
+            { "value": "present", "label_uk": "Присутнє" },
+            { "value": "cannot_determine", "label_uk": "Неможливо визначити" },
+            { "value": "not_applicable", "label_uk": "Не застосовується" }
+          ]
+        },
+        {
+          "field_id": "visceral_pleura_invasion",
+          "field_name_uk": "Інвазія вісцеральної плеври",
+          "type": "single_select",
+          "options": [
+            { "value": "not_identified", "label_uk": "Не виявлено" },
+            { "value": "present", "label_uk": "Присутня" },
+            { "value": "cannot_determine", "label_uk": "Неможливо визначити" },
+            { "value": "other", "label_uk": "Інше (уточнити)", "has_text": true }
+          ]
+        },
+        {
+          "field_id": "direct_invasion",
+          "field_name_uk": "Пряма інвазія інших структур",
+          "type": "single_select",
+          "options": [
+            { "value": "not_applicable", "label_uk": "Не застосовується (структури відсутні)" },
+            { "value": "not_identified", "label_uk": "Не виявлено" },
+            { "value": "present", "label_uk": "Присутня", "triggers_child": "invaded_structures" }
+          ],
+          "child_fields": [
+            {
+              "field_id": "invaded_structures",
+              "label_uk": "Залучені структури (виберіть усі відповідні)",
+              "type": "multi_select",
+              "options": [
+                { "value": "adjacent_lobe", "label_uk": "Суміжна частка легені" },
+                { "value": "parietal_pleura", "label_uk": "Парієтальна плевра" },
+                { "value": "chest_wall", "label_uk": "Грудна стінка (жирова тканина, скелетні м'язи, ребра)" },
+                { "value": "main_bronchus", "label_uk": "Головний бронх (до, але не включаючи карину)" },
+                { "value": "phrenic_nerve", "label_uk": "Діафрагмальний нерв" },
+                { "value": "parietal_pericardium", "label_uk": "Парієтальний перикард" },
+                { "value": "visceral_pericardium", "label_uk": "Вісцеральний перикард (епікард)" },
+                { "value": "diaphragm", "label_uk": "Діафрагма" },
+                { "value": "heart", "label_uk": "Серце" },
+                { "value": "great_vessels", "label_uk": "Великі судини (аорта, порожнисті вени, легеневі артерії/вени)" },
+                { "value": "trachea", "label_uk": "Трахея" },
+                { "value": "carina", "label_uk": "Карина" },
+                { "value": "esophagus", "label_uk": "Стравохід" },
+                { "value": "vertebral_body", "label_uk": "Тіло хребця" },
+                { "value": "other", "label_uk": "Інше (уточнити)", "has_text": true }
+              ]
+            }
+          ]
+        },
+        {
+          "field_id": "treatment_effect",
+          "field_name_uk": "Ефект лікування",
+          "type": "single_select",
+          "options": [
+            { "value": "no_therapy", "label_uk": "Немає відомої передопераційної терапії" },
+            { "value": "not_identified", "label_uk": "Не виявлено" },
+            { "value": "present", "label_uk": "Присутній", "triggers_child": "treatment_effect_details" }
+          ],
+          "child_fields": [
+            {
+              "field_id": "treatment_effect_details",
+              "type": "composite",
+              "subfields": [
+                { "field_id": "viable_tumor_pct", "label_uk": "Відсоток залишкової життєздатної пухлини (%)", "type": "number" },
+                { "field_id": "necrosis_pct", "label_uk": "Відсоток некрозу (%)", "type": "number" },
+                { "field_id": "stroma_pct", "label_uk": "Відсоток строми (вкл. фіброз та запалення) (%)", "type": "number" },
+                { "field_id": "inflammation", "label_uk": "Запалення (Слабке/Помірне/Виражене)", "type": "text" }
+              ]
+            }
+          ]
+        },
+        {
+          "field_id": "lvi",
+          "field_name_uk": "Лімфатична та/або судинна інвазія",
+          "type": "multi_select",
+          "options": [
+            { "value": "not_identified", "label_uk": "Не виявлено" },
+            { "value": "lymphatic", "label_uk": "Лімфатична інвазія присутня" },
+            { "value": "arterial", "label_uk": "Артеріальна інвазія присутня" },
+            { "value": "venous", "label_uk": "Венозна інвазія присутня" },
+            { "value": "cannot_determine", "label_uk": "Неможливо визначити" }
+          ]
+        }
+      ]
+    },
+    {
+      "section_id": "margins",
+      "section_name_uk": "Краї резекції (Margins)",
+      "fields": [
+        {
+          "field_id": "invasive_margin_status",
+          "field_name_uk": "Статус краю для інвазивної пухлини",
+          "type": "single_select",
+          "options": [
+            { "value": "negative", "label_uk": "Всі краї негативні щодо інвазивної пухлини" },
+            { "value": "positive", "label_uk": "Інвазивна пухлина присутня в краї", "triggers_child": "positive_margins" }
+          ]
+        },
+        {
+          "field_id": "closest_margin",
+          "field_name_uk": "Найближчий край до інвазивної пухлини",
+          "type": "multi_select",
+          "options": [
+            { "value": "bronchial", "label_uk": "Бронхіальний", "has_text": true },
+            { "value": "vascular", "label_uk": "Судинний", "has_text": true },
+            { "value": "parenchymal", "label_uk": "Паренхіматозний", "has_text": true },
+            { "value": "chest_wall", "label_uk": "Край грудної стінки", "has_text": true },
+            { "value": "other", "label_uk": "Інший прилеглий край тканини (уточнити)", "has_text": true }
+          ]
+        },
+        {
+          "field_id": "distance_to_margin",
+          "field_name_uk": "Відстань від інвазивної пухлини до найближчого краю (см)",
+          "type": "number"
+        },
+        {
+          "field_id": "non_invasive_margin_status",
+          "field_name_uk": "Статус краю для неінвазивної пухлини",
+          "type": "multi_select",
+          "options": [
+            { "value": "negative", "label_uk": "Всі краї негативні щодо неінвазивної пухлини" },
+            { "value": "cis_bronchial", "label_uk": "Карцинома in situ присутня в бронхіальному краї" },
+            { "value": "cis_parenchymal", "label_uk": "Карцинома in situ присутня в паренхіматозному краї" },
+            { "value": "lepidic_parenchymal", "label_uk": "Лепідичний компонент інвазивної карциноми в паренхіматозному краї" },
+            { "value": "not_applicable", "label_uk": "Не застосовується" }
+          ]
+        }
+      ]
+    },
+    {
+      "section_id": "regional_lymph_nodes",
+      "section_name_uk": "Регіонарні лімфатичні вузли",
+      "fields": [
+        {
+          "field_id": "lymph_node_status",
+          "field_name_uk": "Статус регіонарних лімфатичних вузлів",
+          "type": "single_select",
+          "options": [
+            { "value": "not_applicable", "label_uk": "Не застосовується (не надані або не знайдені)" },
+            { "value": "negative", "label_uk": "Всі регіонарні лімфовузли негативні щодо пухлини" },
+            { "value": "positive", "label_uk": "Пухлина присутня в регіонарному лімфовузлі(-ах)", "triggers_child": "positive_nodes_details" }
+          ],
+          "child_fields": [
+            {
+              "field_id": "positive_nodes_details",
+              "type": "composite",
+              "subfields": [
+                { "field_id": "number_with_tumor", "label_uk": "Кількість лімфовузлів з пухлиною", "type": "number" },
+                { "field_id": "extranodal_extension", "label_uk": "Екстранодальне поширення (Присутнє/Не виявлено)", "type": "text" },
+                { "field_id": "largest_deposit_mm", "label_uk": "Розмір найбільшого метастатичного депозиту (мм)", "type": "number" }
+              ]
+            }
+          ]
+        },
+        {
+          "field_id": "nodes_examined",
+          "field_name_uk": "Загальна кількість досліджених лімфовузлів",
+          "type": "number"
+        },
+        {
+          "field_id": "nodal_stations",
+          "field_name_uk": "Досліджені/Залучені станції (1R, 2R, 10L тощо)",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "section_id": "distant_metastasis",
+      "section_name_uk": "Віддалені метастази",
+      "fields": [
+        {
+          "field_id": "distant_site",
+          "field_name_uk": "Залучені віддалені ділянки",
+          "type": "multi_select",
+          "options": [
+            { "value": "not_applicable", "label_uk": "Не застосовується" },
+            { "value": "contralateral_lobe", "label_uk": "Окремий пухлинний вузол(и) у контралатеральній частці" },
+            { "value": "pleural_nodule", "label_uk": "Плевральний вузол(и)" },
+            { "value": "pericardial_nodule", "label_uk": "Перикардіальний вузол(и)" },
+            { "value": "pleural_effusion", "label_uk": "Злоякісний плевральний випіт" },
+            { "value": "pericardial_effusion", "label_uk": "Злоякісний перикардіальний випіт" },
+            { "value": "single_extrathoracic", "label_uk": "Одиночний екстраторакальний метастаз в одному органі" },
+            { "value": "multiple_single_organ", "label_uk": "Множинні екстраторакальні метастази в одному органі" },
+            { "value": "multiple_organs", "label_uk": "Множинні екстраторакальні метастази в багатьох органах" },
+            { "value": "other", "label_uk": "Інше (уточнити)", "has_text": true }
+          ]
+        }
+      ]
+    },
+    {
+      "section_id": "ptnm_classification",
+      "section_name_uk": "Класифікація pTNM (AJCC Версія 9)",
+      "fields": [
+        {
+          "field_id": "pt_category",
+          "field_name_uk": "pT Категорія",
+          "type": "single_select",
+          "options": [
+            { "value": "pT0", "label_uk": "pT0: Немає ознак первинної пухлини" },
+            { "value": "pTis", "label_uk": "pTis: Карцинома in situ (SCIS або AIS)" },
+            { "value": "pT1mi", "label_uk": "pT1mi: Мінімально інвазивна аденокарцинома (≤3 см, інвазія ≤5 мм)" },
+            { "value": "pT1a", "label_uk": "pT1a: Пухлина ≤1 см" },
+            { "value": "pT1b", "label_uk": "pT1b: Пухлина >1 см, але ≤2 см" },
+            { "value": "pT1c", "label_uk": "pT1c: Пухлина >2 см, але ≤3 см" },
+            { "value": "pT2a", "label_uk": "pT2a: Пухлина >3 см, але ≤4 см (або має ознаки T2)" },
+            { "value": "pT2b", "label_uk": "pT2b: Пухлина >4 см, але ≤5 см" },
+            { "value": "pT3", "label_uk": "pT3: Пухлина >5 см, але ≤7 см (або інвазія грудної стінки, окремі вузли в тій же частці)" },
+            { "value": "pT4", "label_uk": "pT4: Пухлина >7 см (або інвазія середостіння, діафрагми, вузли в іншій частці)" }
+          ]
+        },
+        {
+          "field_id": "pn_category",
+          "field_name_uk": "pN Категорія",
+          "type": "single_select",
+          "options": [
+            { "value": "pN0", "label_uk": "pN0: Немає ураження регіонарних лімфовузлів" },
+            { "value": "pN1", "label_uk": "pN1: Ураження іпсилатеральних перибронхіальних/кореневих/внутрішньолегеневих вузлів" },
+            { "value": "pN2a", "label_uk": "pN2a: Ураження однієї іпсилатеральної медіастинальної або субкаринальної станції" },
+            { "value": "pN2b", "label_uk": "pN2b: Ураження множинних іпсилатеральних медіастинальних станцій" },
+            { "value": "pN3", "label_uk": "pN3: Ураження контралатеральних або надключичних/сходових вузлів" }
+          ]
+        },
+        {
+          "field_id": "pm_category",
+          "field_name_uk": "pM Категорія",
+          "type": "single_select",
+          "options": [
+            { "value": "not_applicable", "label_uk": "Не застосовується" },
+            { "value": "pM1a", "label_uk": "pM1a: Плевральні/перикардіальні вузли або випіт, вузол у контралатеральній частці" },
+            { "value": "pM1b", "label_uk": "pM1b: Одиночний екстраторакальний метастаз" },
+            { "value": "pM1c1", "label_uk": "pM1c1: Множинні екстраторакальні метастази в одному органі" },
+            { "value": "pM1c2", "label_uk": "pM1c2: Множинні екстраторакальні метастази в різних органах" }
+          ]
+        }
+      ]
+    },
+    {
+      "section_id": "additional_findings",
+      "section_name_uk": "Додаткові знахідки",
+      "fields": [
+        {
+          "field_id": "findings",
+          "field_name_uk": "Знахідки (виберіть усі відповідні)",
+          "type": "multi_select",
+          "options": [
+            { "value": "none", "label_uk": "Не виявлено" },
+            { "value": "aah", "label_uk": "Атипова аденоматозна гіперплазія", "has_text": true },
+            { "value": "tumorlets", "label_uk": "Пухлинки (Tumorlets)", "has_text": true },
+            { "value": "squamous_dysplasia", "label_uk": "Плоскоклітинна дисплазія" },
+            { "value": "diffuse_ne_hyperplasia", "label_uk": "Дифузна нейроендокринна гіперплазія" },
+            { "value": "biopsy_site_changes", "label_uk": "Зміни на місці біопсії" },
+            { "value": "granulomatous_inflammation", "label_uk": "Гранулематозне запалення (вказати некротизуюче чи ні)", "has_text": true },
+            { "value": "post_obstructive", "label_uk": "Постобструктивні зміни" },
+            { "value": "fibrosis", "label_uk": "Фіброз", "has_text": true },
+            { "value": "emphysema", "label_uk": "Емфізема" },
+            { "value": "other", "label_uk": "Інше (уточнити)", "has_text": true }
+          ]
+        }
+      ]
+    },
+    {
+      "section_id": "comments",
+      "section_name_uk": "Коментарі",
+      "fields": [
+        {
+          "field_id": "general_comments",
+          "field_name_uk": "Загальні коментарі",
+          "type": "text"
+        }
+      ]
+    }
+  ]
+}
