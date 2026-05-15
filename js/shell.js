@@ -25,6 +25,16 @@ function initials(name) {
 }
 
 export async function renderShell(activePage) {
+  // Показуємо spinner одразу
+  if (!document.getElementById('mp-spinner')) {
+    const sp = document.createElement('div');
+    sp.id = 'mp-spinner';
+    sp.innerHTML = `<div class="mp-logo-pulse">
+      <div class="mp-l1">MORPHE<span>OS</span></div>
+      <div class="mp-l2">PATHOLOGY</div>
+    </div>`;
+    document.body.prepend(sp);
+  }
   const profile = await getProfile();
   if (!profile) return null;
 
@@ -104,6 +114,12 @@ export async function renderShell(activePage) {
     }
   });
 
+  // Ховаємо spinner
+  const sp = document.getElementById('mp-spinner');
+  if (sp) {
+    sp.classList.add('hide');
+    setTimeout(() => sp.remove(), 220);
+  }
   return profile;
 }
 
