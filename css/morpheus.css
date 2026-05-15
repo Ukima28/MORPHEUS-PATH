@@ -140,8 +140,8 @@ body,
 
 /* ── АНІМАЦІЯ ПЕРЕХОДІВ ── */
 body {
-  opacity: 0;
-  transition: opacity 250ms ease;
+  opacity: 1;
+  transition: opacity 150ms ease;
 }
 
 /* ── PRINT ── */
