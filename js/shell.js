@@ -51,7 +51,7 @@ export async function renderShell(activePage) {
           <a href="${BASE}/pages/cases.html" class="text-decoration-none">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 30" width="110" height="30" role="img">
               <title>MORPHEOS PATHOLOGY</title>
-              <text font-family="Arial,sans-serif" font-size="13" font-weight="700" letter-spacing="0.5">
+              <text font-family="Arial,sans-serif" font-size="13" font-weight="700">
                 <tspan x="0" y="14" fill="#1a1a1a">MORPHE</tspan><tspan fill="#BA1A32">OS</tspan>
               </text>
               <text x="0" y="27" font-family="Arial,sans-serif" font-size="9" font-weight="400" letter-spacing="1.5" fill="#94a3b8">PATHOLOGY</text>
