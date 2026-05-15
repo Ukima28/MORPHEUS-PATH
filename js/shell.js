@@ -88,7 +88,7 @@ export async function renderShell(activePage) {
   document.getElementById('btn-logout')?.addEventListener('click', e => {
     e.preventDefault();
     document.body.style.opacity = '0';
-    setTimeout(() => logout(), 200);
+    setTimeout(() => logout(), 150);
   });
 
   // Плавний перехід між сторінками
@@ -100,11 +100,10 @@ export async function renderShell(activePage) {
     if (href.startsWith('/morpheos-path')) {
       e.preventDefault();
       document.body.style.opacity = '0';
-      setTimeout(() => { window.location.href = href; }, 200);
+      setTimeout(() => { window.location.href = href; }, 150);
     }
   });
 
-  document.body.style.opacity = '1';
   return profile;
 }
 
