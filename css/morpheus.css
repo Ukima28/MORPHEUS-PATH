@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
+html { font-size: 110%; }
 body { font-family: 'Inter', sans-serif !important; }
 .mono { font-family: 'JetBrains Mono', monospace !important; font-size: 12px !important; font-weight: 500 !important; }
 
