@@ -49,13 +49,7 @@ export async function renderShell(activePage) {
         </button>
         <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
           <a href="${BASE}/pages/cases.html" class="text-decoration-none">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 30" width="90" height="30" role="img">
-              <title>MORPHEOS PATHOLOGY</title>
-              <text font-family="Arial,sans-serif" font-size="13" font-weight="700" textLength="90" lengthAdjust="spacingAndGlyphs">
-                <tspan x="0" y="14" fill="#1a1a1a">MORPHE</tspan><tspan fill="#BA1A32">OS</tspan>
-              </text>
-              <text x="0" y="27" font-family="Arial,sans-serif" font-size="9" font-weight="400" fill="#94a3b8" textLength="90" lengthAdjust="spacingAndGlyphs">PATHOLOGY</text>
-            </svg>
+            <img src="/morpheos-path/images/logo-navbar.svg" alt="MORPHEOS PATHOLOGY" width="92" height="30" style="display:block">
           </a>
         </h1>
         <div class="navbar-nav flex-row order-md-last">
@@ -94,7 +88,7 @@ export async function renderShell(activePage) {
   document.getElementById('btn-logout')?.addEventListener('click', e => {
     e.preventDefault();
     document.body.style.opacity = '0';
-    setTimeout(() => logout(), 50);
+    setTimeout(() => logout(), 200);
   });
 
   // Плавний перехід між сторінками
@@ -106,10 +100,11 @@ export async function renderShell(activePage) {
     if (href.startsWith('/morpheos-path')) {
       e.preventDefault();
       document.body.style.opacity = '0';
-      setTimeout(() => { window.location.href = href; }, 50);
+      setTimeout(() => { window.location.href = href; }, 200);
     }
   });
 
+  document.body.style.opacity = '1';
   return profile;
 }
 
