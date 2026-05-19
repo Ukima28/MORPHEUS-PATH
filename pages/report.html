@@ -27,6 +27,9 @@
           <h2 class="page-title" id="page-title">Заключення</h2>
         </div>
         <div class="col-auto d-flex gap-2">
+          <button class="btn btn-outline-secondary btn-sm" id="btn-copy-report">
+            <i class="ti ti-copy me-1"></i>Копіювати
+          </button>
           <button class="btn btn-outline-secondary btn-sm" id="btn-templates">
             <i class="ti ti-layout-list me-1"></i>Шаблони
           </button>
@@ -613,6 +616,38 @@ document.getElementById('manual-icd-confirm').addEventListener('click', () => {
 });
 document.getElementById('manual-icd-input').addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('manual-icd-confirm').click();
+});
+
+
+// ── КОПІЮВАТИ ЗАКЛЮЧЕННЯ ──
+document.getElementById('btn-copy-report').addEventListener('click', () => {
+  const parts = [];
+
+  const b2 = document.getElementById('block2').value.trim();
+  if (b2) parts.push(`Макро- і мікроскопічний описи:\n${b2}`);
+
+  const b3 = document.getElementById('block3').value.trim();
+  if (b3) parts.push(`Патологоанатомічний діагноз:\n${b3}`);
+
+  if (icdSelected.length) {
+    const codes = icdSelected.map(i => i.code).join('; ');
+    parts.push(`ICD-O-4: ${codes}`);
+  }
+
+  const b5 = document.getElementById('block5').value.trim();
+  if (b5) parts.push(`Коментар:\n${b5}`);
+
+  if (!parts.length) { toast('Немає даних для копіювання', 'error'); return; }
+
+  const text = parts.join('\n\n');
+  navigator.clipboard.writeText(text)
+    .then(() => toast('Скопійовано'))
+    .catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta);
+      ta.select(); document.execCommand('copy'); ta.remove();
+      toast('Скопійовано');
+    });
 });
 
 // ── ЗБІР ДАНИХ ──
