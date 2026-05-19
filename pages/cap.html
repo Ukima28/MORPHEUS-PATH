@@ -9,29 +9,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/morpheos-path/css/morpheus.css">
   <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/js/tabler.min.js"></script>
-  <style>
-    body{opacity:0;transition:opacity .05s ease}body.loaded{opacity:1}
-    .cap-section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tblr-primary);border-bottom:2px solid var(--tblr-primary);padding-bottom:5px;margin-bottom:1rem}
-    .cap-field{margin-bottom:1.25rem}
-    .cap-field-label{font-size:13px;font-weight:600;color:#1e293b;margin-bottom:6px;display:flex;align-items:center;gap:6px}
-    .badge-req{font-size:10px;background:#fef2f2;color:#dc2626;border-radius:4px;padding:1px 5px;font-weight:700}
-    .badge-opt{font-size:10px;background:#f1f5f9;color:#64748b;border-radius:4px;padding:1px 5px}
-    .cap-note{font-size:11px;color:#64748b;margin-bottom:7px;font-style:italic}
-    .cap-options{display:flex;flex-direction:column;gap:3px}
-    .cap-option{display:flex;align-items:flex-start;gap:8px;padding:5px 10px;border-radius:6px;cursor:pointer;transition:background .1s}
-    .cap-option:hover{background:#f8fafc}
-    .cap-option.selected{background:#eff6ff}
-    .cap-option input{margin-top:2px;flex-shrink:0}
-    .cap-option label{font-size:13px;cursor:pointer;line-height:1.4}
-    .cap-opt-text{margin-top:4px;margin-left:24px}
-    .cap-child{margin-left:24px;margin-top:6px;display:none}
-    .cap-child.visible{display:block}
-    .synoptic-preview{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px;font-size:11.5px;line-height:1.7;white-space:pre-wrap;font-family:'JetBrains Mono',monospace;max-height:500px;overflow-y:auto}
-    .protocol-card{cursor:pointer;transition:border .15s;border:2px solid transparent}
-    .protocol-card:hover{border-color:var(--tblr-primary)}
-  </style>
 </head>
-<body class="antialiased" data-theme="ruby">
+<body class="antialiased">
 <div id="navbar-placeholder"></div>
 <div class="page-wrapper">
   <div class="page-header d-print-none">
@@ -98,14 +77,6 @@ const PROTOCOLS = [
     date: '2024-12',
     description: 'CAP протокол для карциноми ендометрія. AJCC 8-е видання, FIGO 2023.',
     file: '/morpheos-path/cap-schemas/cap_endometrium_schema.json',
-  },
-  {
-    id: 'cap_lung',
-    title: 'Карцинома легені',
-    version: '5.1.0.0',
-    date: '2025-09',
-    description: 'CAP протокол для карцином легені. AJCC 9-е видання.',
-    file: '/morpheos-path/cap-schemas/cap_lung_schema.json',
   },
 ];
 
@@ -240,10 +211,11 @@ function buildOptions(f, isMulti) {
   return `<div class="cap-options">${(f.options||[]).map(o => `
     <div class="cap-option" id="opt-${f.field_id}-${o.value}">
       <input type="${type}" id="f-${f.field_id}-${o.value}" name="${name}" value="${o.value}"
-        class="cap-inp" data-fid="${f.field_id}" data-trigger-child="${o.triggers_child||''}">
+        class="cap-inp" data-fid="${f.field_id}" data-trigger-child="${o.triggers_child||''}"
+        ${!isMulti ? 'data-single="true"' : ''}>
       <label for="f-${f.field_id}-${o.value}">${o.label_uk}</label>
     </div>
-    ${o.has_text ? `<div class="cap-opt-text"><input type="text" class="form-control form-control-sm cap-opt-extra" data-for="${f.field_id}-${o.value}" placeholder="Уточніть..."></div>` : ''}`).join('')}
+    ${o.has_text ? `<div class="cap-opt-text cap-opt-extra-wrap" id="extra-${f.field_id}-${o.value}" style="display:none"><input type="text" class="form-control form-control-sm cap-opt-extra" data-for="${f.field_id}-${o.value}" placeholder="Уточніть..."></div>` : ''}`).join('')}
   </div>`;
 }
 
@@ -256,13 +228,46 @@ function bindEvents() {
     el.addEventListener('input', () => { collectState(); updateSynoptic(); });
   });
   document.querySelectorAll('.cap-option input').forEach(inp => {
+    // has_text — показуємо поле після вибору
+    inp.addEventListener('change', () => {
+      const fid  = inp.dataset.fid;
+      const val  = inp.value;
+      const wrap = document.getElementById(`extra-${fid}-${val}`);
+      if (wrap) wrap.style.display = inp.checked ? '' : 'none';
+    });
+
+    // Підсвічування
     inp.addEventListener('change', () => {
       const name = inp.name;
       if (inp.type === 'radio') {
-        document.querySelectorAll(`input[name="${name}"]`).forEach(r => r.closest('.cap-option').classList.remove('selected'));
+        // Ховаємо has_text для всіх інших
+        document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+          r.closest('.cap-option').classList.remove('selected');
+          const w = document.getElementById(`extra-${r.dataset.fid}-${r.value}`);
+          if (w && r !== inp) w.style.display = 'none';
+        });
       }
       inp.closest('.cap-option').classList.toggle('selected', inp.checked);
     });
+
+    // single_select — повторний клік знімає
+    if (inp.dataset.single === 'true') {
+      inp.addEventListener('click', e => {
+        if (inp.dataset.wasChecked === 'true') {
+          inp.checked = false;
+          inp.dataset.wasChecked = 'false';
+          inp.closest('.cap-option').classList.remove('selected');
+          const w = document.getElementById(`extra-${inp.dataset.fid}-${inp.value}`);
+          if (w) w.style.display = 'none';
+          onInput();
+        } else {
+          document.querySelectorAll(`input[name="${inp.name}"]`).forEach(r => {
+            r.dataset.wasChecked = 'false';
+          });
+          inp.dataset.wasChecked = 'true';
+        }
+      });
+    }
   });
 }
 
